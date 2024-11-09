@@ -1,0 +1,8 @@
+@charset "UTF-8";
+
+@use "abstracts/reset" as *;
+
+//tailwinds
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

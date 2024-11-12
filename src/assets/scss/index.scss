@@ -1,6 +1,7 @@
 @charset "UTF-8";
 
 @use "abstracts/reset" as *;
+@use "vendors/overrides" as *;
 
 //tailwinds
 @tailwind base;

@@ -47,8 +47,41 @@ const calendarOptions = reactive({
 });
 </script>
 <template>
-    <div class="m-2">
+    <div class="m-4">
         <FullCalendar :options="calendarOptions" />
+    </div>
+    <div class="mx-4">
+        <div class="mb-1 flex flex-col items-end">
+            <span class="text-xs text-gray-400">2024년 11월 금주 일</span
+            ><span>2일</span>
+        </div>
+        <ul class="divide-y divide-gray-400 rounded-lg">
+            <li class="flex items-center justify-between bg-gray-800 p-4">
+                <div class="flex items-center space-x-4">
+                    <span
+                        class="h-8 w-8 flex-shrink-0 rounded-full bg-red-500"
+                    ></span>
+                    <div class="flex flex-col">
+                        <span class="text-lg font-medium">필름이 끊겼어요</span>
+                        <span class="text-sm text-gray-300"
+                            >아 씨바 또 눈뜨니 집이네</span
+                        >
+                    </div>
+                </div>
+                <span class="min-w-max text-sm text-gray-400">11월 20일</span>
+            </li>
+            <li class="flex items-center justify-between bg-gray-800 p-4">
+                <div class="flex items-center space-x-4">
+                    <span
+                        class="h-8 w-8 flex-shrink-0 rounded-full bg-yellow-500"
+                    ></span>
+                    <div class="flex flex-col">
+                        <span class="text-lg font-medium">토했어요</span>
+                    </div>
+                </div>
+                <span class="min-w-max text-sm text-gray-400">11월 18일</span>
+            </li>
+        </ul>
     </div>
     <BottomNavigation></BottomNavigation>
 </template>

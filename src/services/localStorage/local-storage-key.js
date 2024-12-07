@@ -1,4 +1,5 @@
 export default class LocalStorageKey {
+    static UUID = "uuid"; // 회원 uuid
     static APP_STATE = "app_state";
     static APP_VERSION = "app_version";
     static DEVICE_OS = "device_os";

@@ -12,12 +12,4 @@ import { createClient } from "@supabase/supabase-js";
 const app = createApp(App);
 const pinia = createPinia();
 
-const supabase = createClient(
-    import.meta.env.VITE_API,
-    import.meta.env.VITE_API_KEY
-);
-const { data, error } = await supabase.from("User").select(`
-      id
-  `);
-console.log(data);
 app.use(router).use(pinia).use(vuetify).mount("#app");

@@ -1,16 +1,39 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useUserStore } from "@/stores/user.js";
 
-defineProps({
-    msg: String,
+import userSql from "@/services/sql/user.sql";
+import LocalStorageService from "@/services/localStorage/local-storage.service";
+import LocalStorageKey from "@/services/localStorage/local-storage-key";
+
+const router = useRouter();
+const user = useUserStore();
+
+onMounted(async () => {
+    try {
+        let uuid = LocalStorageService.getItem(LocalStorageKey.UUID);
+        if (!uuid) {
+            // 회원 가입 (자동)
+            uuid = "32KJD+SsSWIMWDDW823";
+            const nickname = "술꾼" + "32847982";
+            await userSql.insterUser({ uuid, nickname });
+            LocalStorageService.setItem(LocalStorageKey.UUID, uuid);
+            // default category 질문
+        } else {
+            // 회원 정보 가져오기
+            user.info = await userSql.getUser(uuid);
+        }
+        router.push({ name: "Home" });
+    } catch (e) {
+        console.log(e);
+    }
 });
 
 const count = ref(0);
 </script>
 
 <template>
-    <h1>{{ msg }}</h1>
-
     <div class="card">
         <button type="button" @click="count++">count is {{ count }}</button>
         <p>

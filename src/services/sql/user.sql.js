@@ -2,7 +2,6 @@ import db from "@/lib/db";
 
 class UserSQLService {
     async insterUser(params) {
-        console.log("dd");
         const { data, error } = await db.from("user").insert(params);
 
         if (error) {

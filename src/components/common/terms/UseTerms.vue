@@ -6,7 +6,7 @@ const emits = defineEmits(["close"]);
 </script>
 <template>
     <v-bottom-sheet :model-value="props.show" scrollable persistent>
-        <v-card class="!p-8 !pt-2 !shadow-none">
+        <v-card class="rounded-t-xl !p-8 !pt-2 !shadow-none">
             <div class="flex justify-end py-2">
                 <v-icon icon="mdi-close" @click="$emit('close')"></v-icon>
             </div>

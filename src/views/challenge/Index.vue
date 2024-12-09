@@ -4,7 +4,7 @@ import { ref } from "vue";
 import BottomNavigation from "@/components/layout/BottomNavigation.vue";
 import Add from "@/components/challenge/Add.vue";
 
-const addPopsShow = ref(true);
+const addPopsShow = ref(false);
 </script>
 <template>
     <Add v-model:show="addPopsShow" />

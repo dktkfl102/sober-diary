@@ -10,23 +10,9 @@ const vuetify = createVuetify({
             style: [{ textTransform: "none" }],
         },
         VLabel: {
-            style: [{ fontSize: "14px" }],
+            class: "font-pretendard",
         },
-        VTextarea: {
-            VField: {
-                style: [{ fontSize: "0.8rem" }],
-            },
-        },
-        VSelect: {
-            VField: {
-                style: [{ fontSize: "14px" }],
-            },
-        },
-        VInput: {
-            VField: {
-                style: [{ fontSize: "14px" }],
-            },
-        },
+        VSelect: { class: "font-pretendard" },
         VDialog: { class: "font-pretendard" },
         VCard: { class: "font-pretendard" },
     },

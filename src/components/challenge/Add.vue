@@ -1,18 +1,20 @@
 <script setup>
 import { onMounted, reactive } from "vue";
 
+import challengeSql from "@/services/sql/challenge.sql";
 import DateUtils from "@/utils/date-utils";
+import Formatters from "@/utils/formatters";
 
 const show = defineModel("show", { type: Boolean });
 const emits = defineEmits(["close"]);
 
 const challengeData = reactive({
-    challengeType: 1, // TODO 챌린지 타입 API로 받아오기
-    name: "",
+    challengeId: 1, // 1: 기간, 2: 개인
     categoryId: 1, // 마찬가지 -> API로 받아서 store에 넣어놓기 & 로컬스토리지 검사해서 금주 숨겨놨을 경우 금주안가져오기
     startDate: null,
     duration: "",
     memo: "",
+    title: "",
 });
 
 const state = reactive({
@@ -21,6 +23,22 @@ const state = reactive({
 });
 
 onMounted(() => {});
+
+const addChallenge = async () => {
+    // TODO 유효성 검사 추가 필요
+    if (challengeData.challengeId === 1)
+        challengeData.title = challengeData.duration + "일 챌린지";
+    else if (challengeData.challengeId === 2) {
+        challengeData.duration = null;
+    }
+
+    try {
+        await challengeSql.insert(challengeData);
+        show.value = false;
+    } catch (e) {
+        console.log(e);
+    }
+};
 
 const updateStartDate = () => {
     if (challengeData.startDate) {
@@ -50,15 +68,14 @@ updateStartDate();
                             class="w-47/100"
                             :class="{
                                 '!bg-gradient-to-r from-violet-400 to-pink-500 text-white':
-                                    challengeData.challengeType ===
-                                    challenge.id,
+                                    challengeData.challengeId === challenge.id,
                             }"
-                            :active="
-                                challengeData.challengeType === challenge.id
-                            "
-                            @click="challengeData.challengeType = challenge.id"
+                            :active="challengeData.challengeId === challenge.id"
+                            @click="challengeData.challengeId = challenge.id"
                         >
-                            <span class="text-base">{{ challenge.type }}</span>
+                            <span class="text-base">{{
+                                challenge.type_ko
+                            }}</span>
                         </v-btn>
                     </v-card-text>
                 </v-card>
@@ -78,26 +95,28 @@ updateStartDate();
                         :active="challengeData.categoryId === category.id"
                         @click="challengeData.categoryId = category.id"
                     >
-                        <span class="text-base">{{ category.type }}</span>
+                        <span class="text-base">{{ category.type_ko }}</span>
                     </v-btn>
                 </v-card-text>
             </v-card>
 
             <v-text-field
-                v-if="challengeData.type === 2"
-                v-model="challengeData.name"
+                v-if="challengeData.challengeId === 2"
+                v-model="challengeData.title"
                 label="챌린지명"
                 variant="underlined"
                 class="mb-4"
                 :placeholder="
-                    challengeData.type === 1
+                    challengeData.categoryId === 1
                         ? '회식 날 술 안 먹기'
                         : '술 마실 때 줄담배 안 피기'
                 "
             ></v-text-field>
 
             <span class="my-1 block text-lg font-semibold">{{
-                challengeData.type === 1 ? "챌린지 시작 날짜" : "챌린지 날짜"
+                challengeData.challengeId === 1
+                    ? "챌린지 시작 날짜"
+                    : "챌린지 날짜"
             }}</span>
             <v-menu
                 v-model="state.showDatePicker"
@@ -114,7 +133,7 @@ updateStartDate();
                         readonly
                         class="mb-4"
                         :placeholder="
-                            challengeData.type === 1
+                            challengeData.challengeId === 1
                                 ? '챌린지 시작일을 선택하세요'
                                 : '챌린지 날짜를 선택하세요'
                         "
@@ -136,13 +155,16 @@ updateStartDate();
             </v-menu>
 
             <v-text-field
-                v-if="challengeData.type === 1"
+                v-if="challengeData.challengeId === 1"
                 v-model="challengeData.duration"
                 label="목표 일 수"
                 variant="underlined"
                 class="mb-4"
-                type="number"
-                min="1"
+                @input="
+                    challengeData.duration = Formatters.inputNumber(
+                        challengeData.duration
+                    )
+                "
                 placeholder="목표 기간을 입력하세요"
             ></v-text-field>
 
@@ -152,12 +174,14 @@ updateStartDate();
                 variant="underlined"
                 rows="2"
                 class="mb-4"
+                persistent-counter
                 placeholder="메모를 입력하세요"
+                :counter="50"
             ></v-textarea>
 
             <div class="flex justify-end">
                 <v-btn text color="gray" @click="show = false">취소</v-btn>
-                <v-btn color="primary">추가하기</v-btn>
+                <v-btn color="primary" @click="addChallenge">추가하기</v-btn>
             </div>
         </v-card>
     </v-bottom-sheet>

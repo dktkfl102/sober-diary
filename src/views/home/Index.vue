@@ -1,11 +1,25 @@
 <script setup>
-import { reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
+import diarySql from "@/services/sql/diary.sql";
+import DateUtils from "@/utils/date-utils";
 import BottomNavigation from "@/components/layout/BottomNavigation.vue";
+import AddDirary from "@/components/home/AddDirary.vue";
+
+const addDirayShow = ref(false);
+const list = ref([]);
+
+onMounted(async () => {
+    try {
+        list.value = await diarySql.getRecentList();
+    } catch (e) {
+        console.log(e);
+    }
+});
 
 const onClickDate = (e) => {
     console.log(e);
@@ -22,6 +36,8 @@ const calendarOptions = reactive({
     locale: "ko",
     aspectRatio: 1.1,
     dayMaxEventRows: true,
+    fixedWeekCount: false,
+    showNonCurrentDates: false,
     dayCellContent: function (arg) {
         return arg.dayNumberText.replace("일", "");
     },
@@ -45,43 +61,61 @@ const calendarOptions = reactive({
         today: "오늘",
     },
 });
+
+const getScoreColor = (score) => {
+    switch (score) {
+        case 1:
+            return "#9BFF0D";
+        case 2:
+            return "#E8D00C";
+        case 3:
+            return "#FFAA00";
+        case 4:
+            return "#E85F0C";
+        case 5:
+            return "#FF1104";
+    }
+};
 </script>
 <template>
     <div class="m-4">
         <FullCalendar :options="calendarOptions" />
     </div>
-    <div class="mx-4">
+    <div class="mx-4 pb-10">
         <div class="mb-1 flex flex-col items-end">
             <span class="text-xs text-gray-400">2024년 11월 금주 일</span
             ><span>2일</span>
         </div>
         <ul class="divide-y divide-gray-400 rounded-lg">
-            <li class="flex items-center justify-between bg-gray-800 p-4">
+            <li
+                v-for="item of list"
+                :key="item.id"
+                class="flex items-center justify-between bg-gray-800 p-4"
+            >
                 <div class="flex items-center space-x-4">
                     <span
-                        class="h-8 w-8 flex-shrink-0 rounded-full bg-red-500"
+                        class="h-8 w-8 flex-shrink-0 rounded-full"
+                        :class="'bg-[' + getScoreColor(item.score) + ']'"
                     ></span>
                     <div class="flex flex-col">
                         <span class="text-lg font-medium">필름이 끊겼어요</span>
-                        <span class="text-sm text-gray-300"
-                            >아 씨바 또 눈뜨니 집이네</span
-                        >
+                        <span class="text-sm text-gray-300">{{
+                            item.memo
+                        }}</span>
                     </div>
                 </div>
-                <span class="min-w-max text-sm text-gray-400">11월 20일</span>
-            </li>
-            <li class="flex items-center justify-between bg-gray-800 p-4">
-                <div class="flex items-center space-x-4">
-                    <span
-                        class="h-8 w-8 flex-shrink-0 rounded-full bg-yellow-500"
-                    ></span>
-                    <div class="flex flex-col">
-                        <span class="text-lg font-medium">토했어요</span>
-                    </div>
-                </div>
-                <span class="min-w-max text-sm text-gray-400">11월 18일</span>
+                <span class="min-w-max text-sm text-gray-400">{{
+                    DateUtils.getMonthAndDay(item.log_date)
+                }}</span>
             </li>
         </ul>
     </div>
+    <div
+        @click="addDirayShow = true"
+        class="fixed bottom-20 right-3 rounded-2xl bg-blue-500 p-3"
+    >
+        <v-icon icon="mdi-plus"></v-icon>
+    </div>
+    <AddDirary v-model:show="addDirayShow" />
     <BottomNavigation></BottomNavigation>
 </template>

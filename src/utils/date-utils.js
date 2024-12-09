@@ -59,7 +59,7 @@ export default class DateUtils {
         return `${month}/${day}`;
     }
 
-    // 오늘 날짜의 Date를 YYYY-MM-DD으로 출력
+    // 날짜의 Date를 YYYY-MM-DD으로 출력
     static getTodayFormatDate(today = new Date()) {
         const date = today;
 

@@ -1,6 +1,7 @@
 <script setup>
 import { reactive } from "vue";
 import diarySql from "@/services/sql/diary.sql";
+import DateUtils from "@/utils/date-utils";
 
 const show = defineModel("show", { type: Boolean });
 const emits = defineEmits(["close"]);
@@ -16,14 +17,12 @@ const state = reactive({
     showDatePicker: false,
 });
 
-const updateDate = () => {
+const updateLogdate = () => {
     if (diaryData.logDate) {
-        const date = new Date(diaryData.logDate);
-        // yyyy-dd-mm 포맷으로 변환
-        state.formateedLogDate = `${date.getFullYear()}-${String(
-            date.getDate()
-        ).padStart(2, "0")}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-        state.showDatePicker = false; // DatePicker 닫기
+        state.formateedLogDate = DateUtils.getTodayFormatDate(
+            diaryData.logDate
+        );
+        state.showDatePicker = false;
     }
 };
 
@@ -35,7 +34,7 @@ const writeDiary = async () => {
         console.log(e);
     }
 };
-updateDate();
+updateLogdate();
 </script>
 <template>
     <v-bottom-sheet v-model="show" max-width="500" class="font-pretendard">
@@ -89,7 +88,7 @@ updateDate();
                 </template>
                 <v-date-picker
                     v-model="diaryData.logDate"
-                    @update:modelValue="updateDate"
+                    @update:modelValue="updateLogdate()"
                     :hide-header="true"
                 ></v-date-picker>
             </v-menu>

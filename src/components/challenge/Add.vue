@@ -1,17 +1,36 @@
 <script setup>
-import { reactive } from "vue";
+import { onMounted, reactive } from "vue";
+
+import DateUtils from "@/utils/date-utils";
 
 const show = defineModel("show", { type: Boolean });
 const emits = defineEmits(["close"]);
 
 const challengeData = reactive({
-    type: 1, // TODO 챌린지 타입 API로 받아오기
+    challengeType: 1, // TODO 챌린지 타입 API로 받아오기
     name: "",
-    category: "금주", // 마찬가지 -> API로 받아서 store에 넣어놓기 & 로컬스토리지 검사해서 금주 숨겨놨을 경우 금주안가져오기
-    startDate: "",
+    categoryId: 1, // 마찬가지 -> API로 받아서 store에 넣어놓기 & 로컬스토리지 검사해서 금주 숨겨놨을 경우 금주안가져오기
+    startDate: null,
     duration: "",
     memo: "",
 });
+
+const state = reactive({
+    formateedStartDate: null,
+    showDatePicker: false,
+});
+
+onMounted(() => {});
+
+const updateStartDate = () => {
+    if (challengeData.startDate) {
+        state.formateedStartDate = DateUtils.getTodayFormatDate(
+            challengeData.startDate
+        );
+        state.showDatePicker = false;
+    }
+};
+updateStartDate();
 </script>
 <template>
     <v-bottom-sheet v-model="show" max-width="500" class="font-pretendard">
@@ -23,20 +42,46 @@ const challengeData = reactive({
 
             <!-- Challenge Type Radio Buttons -->
             <div class="mb-4">
-                <v-radio-group v-model="challengeData.type">
-                    <v-radio label="기간 타입" :value="1" color="primary" />
-                    <v-radio label="개인 타입" :value="2" color="primary" />
-                </v-radio-group>
+                <v-card>
+                    <v-card-text class="flex justify-between">
+                        <v-btn
+                            v-for="challenge in $common.value.challenges"
+                            :key="challenge.id"
+                            class="w-47/100"
+                            :class="{
+                                '!bg-gradient-to-r from-violet-400 to-pink-500 text-white':
+                                    challengeData.challengeType ===
+                                    challenge.id,
+                            }"
+                            :active="
+                                challengeData.challengeType === challenge.id
+                            "
+                            @click="challengeData.challengeType = challenge.id"
+                        >
+                            <span class="text-base">{{ challenge.type }}</span>
+                        </v-btn>
+                    </v-card-text>
+                </v-card>
             </div>
 
-            <v-select
-                v-model="challengeData.category"
-                :items="['금연', '금주']"
-                label="카테고리"
-                variant="underlined"
-                class="mb-4"
-                placeholder="카테고리를 선택하세요"
-            ></v-select>
+            <span class="mt-1 block text-lg font-semibold">카테고리</span>
+            <v-card>
+                <v-card-text class="flex justify-between">
+                    <v-btn
+                        v-for="category in $common.value.categories"
+                        :key="category.id"
+                        class="w-47/100"
+                        :class="{
+                            '!bg-gradient-to-r from-violet-400 to-pink-500 text-white':
+                                challengeData.categoryId === category.id,
+                        }"
+                        :active="challengeData.categoryId === category.id"
+                        @click="challengeData.categoryId = category.id"
+                    >
+                        <span class="text-base">{{ category.type }}</span>
+                    </v-btn>
+                </v-card-text>
+            </v-card>
 
             <v-text-field
                 v-if="challengeData.type === 2"
@@ -51,32 +96,42 @@ const challengeData = reactive({
                 "
             ></v-text-field>
 
+            <span class="my-1 block text-lg font-semibold">{{
+                challengeData.type === 1 ? "챌린지 시작 날짜" : "챌린지 날짜"
+            }}</span>
             <v-menu
-                ref="startDateMenu"
-                v-model="startDateMenu"
+                v-model="state.showDatePicker"
                 :close-on-content-click="false"
                 transition="scale-transition"
                 offset-y
                 min-width="auto"
+                attach
             >
-                <template #activator="{ on, attrs }">
+                <template #activator="">
                     <v-text-field
-                        v-model="challengeData.startDate"
+                        v-model="state.formateedStartDate"
                         prepend-icon="mdi-calendar"
                         readonly
-                        v-bind="attrs"
-                        v-on="on"
                         class="mb-4"
                         :placeholder="
                             challengeData.type === 1
                                 ? '챌린지 시작일을 선택하세요'
                                 : '챌린지 날짜를 선택하세요'
                         "
+                        @click="state.showDatePicker = true"
                     ></v-text-field>
                 </template>
                 <v-date-picker
                     v-model="challengeData.startDate"
-                    @input="startDateMenu = false"
+                    @update:modelValue="updateStartDate"
+                    :hide-header="true"
+                    :allowed-dates="
+                        (date) => {
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0); // 시간 정보를 제거하여 오늘 날짜만 남김
+                            return new Date(date) >= today; // 오늘 포함 이후 날짜만 선택 가능
+                        }
+                    "
                 ></v-date-picker>
             </v-menu>
 

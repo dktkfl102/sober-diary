@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, computed } from "vue";
 import "@/assets/scss/index.scss";
 import App from "./App.vue";
 import router from "@/router";
@@ -11,5 +11,10 @@ import { createClient } from "@supabase/supabase-js";
 
 const app = createApp(App);
 const pinia = createPinia();
+
+app.config.globalProperties.$common = computed(() => {
+    const commonStore = pinia.state.value.common;
+    return commonStore;
+});
 
 app.use(router).use(pinia).use(vuetify).mount("#app");

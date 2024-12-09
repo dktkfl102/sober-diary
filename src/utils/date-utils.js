@@ -60,9 +60,7 @@ export default class DateUtils {
     }
 
     // 날짜의 Date를 YYYY-MM-DD으로 출력
-    static getTodayFormatDate(today = new Date()) {
-        const date = today;
-
+    static getTodayFormatDate(date = new Date()) {
         // 날짜 관련 정보 가져오기
         const year = date.getFullYear().toString();
         const month = (date.getMonth() + 1).toString().padStart(2, "0"); // 1을 더하고 2자리로 만들기

@@ -6,7 +6,7 @@ import DateUtils from "@/utils/date-utils";
 import Formatters from "@/utils/formatters";
 
 const show = defineModel("show", { type: Boolean });
-const emits = defineEmits(["close"]);
+const emits = defineEmits(["close", "commit"]);
 
 const challengeData = reactive({
     challengeId: 1, // 1: 기간, 2: 개인
@@ -34,7 +34,7 @@ const addChallenge = async () => {
 
     try {
         await challengeSql.insert(challengeData);
-        show.value = false;
+        emits("commit");
     } catch (e) {
         console.log(e);
     }

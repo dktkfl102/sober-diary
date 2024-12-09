@@ -25,6 +25,19 @@ class ChallengeSQLService {
 
         return data;
     }
+
+    async getRecentList() {
+        const { data, error } = await db
+            .from("user_challenges")
+            .select()
+            .eq("user_id", user_id);
+
+        if (error) {
+            throw new Error("Error getting latest challenges:", error);
+        }
+
+        return data;
+    }
 }
 
 export default new ChallengeSQLService();

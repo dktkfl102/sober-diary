@@ -1,10 +1,12 @@
 <script setup>
 import { onMounted, reactive } from "vue";
+import { useUserStore } from "@/stores/user.js";
 
 import challengeSql from "@/services/sql/challenge.sql";
 import DateUtils from "@/utils/date-utils";
 import Formatters from "@/utils/formatters";
 
+const user = useUserStore();
 const show = defineModel("show", { type: Boolean });
 const emits = defineEmits(["close", "commit"]);
 
@@ -60,7 +62,7 @@ updateStartDate();
 
             <!-- Challenge Type Radio Buttons -->
             <div class="mb-4">
-                <v-card>
+                <v-card class="!shadow-none">
                     <v-card-text class="flex justify-between">
                         <v-btn
                             v-for="challenge in $common.value.challenges"
@@ -81,24 +83,28 @@ updateStartDate();
                 </v-card>
             </div>
 
-            <span class="mt-1 block text-lg font-semibold">카테고리</span>
-            <v-card>
-                <v-card-text class="flex justify-between">
-                    <v-btn
-                        v-for="category in $common.value.categories"
-                        :key="category.id"
-                        class="w-47/100"
-                        :class="{
-                            '!bg-gradient-to-r from-violet-400 to-pink-500 text-white':
-                                challengeData.categoryId === category.id,
-                        }"
-                        :active="challengeData.categoryId === category.id"
-                        @click="challengeData.categoryId = category.id"
-                    >
-                        <span class="text-base">{{ category.type_ko }}</span>
-                    </v-btn>
-                </v-card-text>
-            </v-card>
+            <dvi class="mb-4 mt-1" v-if="user.info.smokingStatus">
+                <span class="block text-lg font-semibold">카테고리</span>
+                <v-card class="!shadow-none">
+                    <v-card-text class="flex justify-between">
+                        <v-btn
+                            v-for="category in $common.value.categories"
+                            :key="category.id"
+                            class="w-47/100"
+                            :class="{
+                                '!bg-gradient-to-r from-violet-400 to-pink-500 text-white':
+                                    challengeData.categoryId === category.id,
+                            }"
+                            :active="challengeData.categoryId === category.id"
+                            @click="challengeData.categoryId = category.id"
+                        >
+                            <span class="text-base">{{
+                                category.type_ko
+                            }}</span>
+                        </v-btn>
+                    </v-card-text>
+                </v-card>
+            </dvi>
 
             <v-text-field
                 v-if="challengeData.challengeId === 2"

@@ -1,5 +1,6 @@
 export default class LocalStorageKey {
     static UUID = "uuid"; // 회원 uuid
+    static SMOKING_STATUS = "smoking_status"; // 흡연 관리 유무
     static APP_STATE = "app_state";
     static APP_VERSION = "app_version";
     static DEVICE_OS = "device_os";

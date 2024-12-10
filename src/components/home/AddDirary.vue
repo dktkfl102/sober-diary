@@ -1,12 +1,14 @@
 <script setup>
 import { reactive } from "vue";
+
 import diarySql from "@/services/sql/diary.sql";
 import DateUtils from "@/utils/date-utils";
+import { alcholeMessages, scoreColors } from "@/constants/alchole";
 
 const show = defineModel("show", { type: Boolean });
 const emits = defineEmits(["close"]);
 const diaryData = reactive({
-    score: null,
+    score: 1,
     logDate: new Date(),
     memo: "",
     categoryId: 1,
@@ -96,13 +98,16 @@ updateLogdate();
             <div
                 class="mb-4 flex flex-col items-center justify-center gap-y-1 text-7xl"
             >
-                <span class="text-lg">많이 마셨어요</span>
+                <span class="text-lg">{{
+                    alcholeMessages[diaryData.score]
+                }}</span>
             </div>
             <v-slider
                 v-model="diaryData.score"
                 :min="1"
                 :max="5"
                 :step="1"
+                :color="scoreColors[diaryData.score]"
             ></v-slider>
 
             <v-textarea

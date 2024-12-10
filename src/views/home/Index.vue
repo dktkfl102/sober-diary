@@ -7,6 +7,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 
 import diarySql from "@/services/sql/diary.sql";
 import DateUtils from "@/utils/date-utils";
+import { alcholeMessages, scoreColors } from "@/constants/alchole";
 import BottomNavigation from "@/components/layout/BottomNavigation.vue";
 import AddDirary from "@/components/home/AddDirary.vue";
 
@@ -61,21 +62,6 @@ const calendarOptions = reactive({
         today: "오늘",
     },
 });
-
-const getScoreColor = (score) => {
-    switch (score) {
-        case 1:
-            return "#9BFF0D";
-        case 2:
-            return "#E8D00C";
-        case 3:
-            return "#FFAA00";
-        case 4:
-            return "#E85F0C";
-        case 5:
-            return "#FF1104";
-    }
-};
 </script>
 <template>
     <div class="m-4">
@@ -95,10 +81,12 @@ const getScoreColor = (score) => {
                 <div class="flex items-center space-x-4">
                     <span
                         class="h-8 w-8 flex-shrink-0 rounded-full"
-                        :class="'bg-[' + getScoreColor(item.score) + ']'"
+                        :class="'bg-[' + scoreColors[item.score] + ']'"
                     ></span>
                     <div class="flex flex-col">
-                        <span class="text-lg font-medium">필름이 끊겼어요</span>
+                        <span class="text-lg font-medium">{{
+                            alcholeMessages[item.score]
+                        }}</span>
                         <span class="text-sm text-gray-300">{{
                             item.memo
                         }}</span>

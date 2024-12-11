@@ -1,17 +1,87 @@
 <script setup>
+import { ref, onMounted } from "vue";
+
+import diarySql from "@/services/sql/diary.sql";
+import DateUtils from "@/utils/date-utils";
 import BottomNavigation from "@/components/layout/BottomNavigation.vue";
 import Doughnut from "@/components/common/chart/Doughnut.vue";
 import HorizontalBar from "@/components/common/chart/HorizontalBar.vue";
+
+const targetMonth = ref(DateUtils.getYearAndMonth());
+const chartData = ref([]);
+const chartKey = ref(0);
+const totalAlcholeCount = ref(0);
+const totalSmokingCount = ref(0);
+
+onMounted(() => {
+    getChartData();
+});
+
+const getChartData = async () => {
+    const result = await diarySql.getListByMonth(targetMonth.value);
+    countScore(result);
+};
+
+const countScore = (data) => {
+    if (data.length === 0) {
+        chartData.value = [];
+        totalAlcholeCount.value = 0;
+        return;
+    }
+
+    const scoreCounts = Array(5).fill(0);
+
+    data.forEach((item) => {
+        scoreCounts[item.score - 1] += 1; // 점수에 맞는 인덱스 증가
+    });
+    chartData.value = scoreCounts;
+    totalAlcholeCount.value = chartData.value
+        .slice(1)
+        .reduce((acc, current) => acc + current, 0);
+};
+
+const changeDate = async (target) => {
+    const searchDate = new Date(targetMonth.value);
+    searchDate.setMonth(searchDate.getMonth() + target);
+    targetMonth.value = DateUtils.getYearAndMonth(searchDate);
+    await getChartData();
+    chartKey.value++;
+};
 </script>
 <template>
-    <div class="m-4">
+    <div class="m-4 pb-20">
         <div class="flex items-center">
-            <v-icon icon="mdi-chevron-left" class="!text-3xl"></v-icon>
-            <span class="block text-xl font-semibold">2024년 11월</span>
-            <v-icon icon="mdi-chevron-right" class="!text-3xl"></v-icon>
+            <v-icon
+                icon="mdi-chevron-left"
+                class="!text-3xl"
+                @click="changeDate(-1)"
+            ></v-icon>
+            <span class="block text-xl font-semibold"
+                >{{ targetMonth.replace("-", "년 ") }}월</span
+            >
+            <v-icon
+                icon="mdi-chevron-right"
+                class="!text-3xl"
+                @click="changeDate(1)"
+                v-if="targetMonth != DateUtils.getYearAndMonth()"
+            ></v-icon>
         </div>
-        <Doughnut />
-        <div>
+        <div v-if="chartData.length > 0">
+            <Doughnut :chartData="chartData" :key="chartKey" />
+            <div class="mx-4 text-lg">
+                <p class="font-semibold">
+                    총 음주 횟수 :
+                    <span class="pr-1 text-xl font-bold text-blue-500">{{
+                        totalAlcholeCount
+                    }}</span
+                    >회
+                </p>
+                <p class="font-semibold">총 흡연 횟수 : 0회</p>
+                <p class="font-semibold">현재 챌린지 달성률</p>
+                <p class="font-semibold">12월 챌린지 달성률</p>
+            </div>
+        </div>
+        <!-- <div>
             <span class="mb-3 block text-lg font-semibold"
                 >기분별 음주 기록</span
             >
@@ -21,7 +91,7 @@ import HorizontalBar from "@/components/common/chart/HorizontalBar.vue";
                 <span class="mb-1 block">나쁠 때</span>
                 <HorizontalBar></HorizontalBar>
             </div>
-        </div>
+        </div> -->
     </div>
     <BottomNavigation></BottomNavigation>
 </template>

@@ -10,22 +10,21 @@ import {
     Legend,
     ArcElement,
 } from "chart.js";
+import { alcholeMessages, scoreColors } from "@/constants/alchole";
 
 ChartJS.register(PointElement, LineElement, ArcElement, Title, Tooltip, Legend);
 ChartJS.defaults.font.family = "Pretendard, sans-serif";
 
-const chartData = ref([]);
+const props = defineProps({
+    chartData: Array,
+});
 const data = {
-    labels: ["안 마셨어요", "취했어요", "토했어요"],
+    labels: Object.values(alcholeMessages),
     datasets: [
         {
-            data: [300, 50, 100],
-            backgroundColor: [
-                "rgb(255, 99, 132)",
-                "rgb(54, 162, 235)",
-                "rgb(255, 205, 86)",
-            ],
-            hoverOffset: 4,
+            data: props.chartData,
+            backgroundColor: Object.values(scoreColors),
+            hoverOffset: 30,
             borderWidth: 1,
         },
     ],
@@ -44,14 +43,44 @@ const options = {
             },
         },
         legend: {
-            position: "right",
+            position: "bottom",
+            maxWidth: 20,
             labels: {
                 color: "white",
                 size: "20px",
+                padding: 15,
             },
         },
     },
+    layout: {
+        padding: 30,
+    },
 };
+
+// const myPlugin = {
+//     beforeDraw: (chart) => {
+//         const { ctx } = chart;
+
+//         // 중앙 위치 계산
+//         const centerX =
+//             chart.chartArea.left +
+//             (chart.chartArea.right - chart.chartArea.left) / 2;
+//         const centerY =
+//             chart.chartArea.top +
+//             (chart.chartArea.bottom - chart.chartArea.top) / 2;
+//         ctx.save();
+
+//         // 텍스트 설정
+//         const text = `음주: ${props.chartData[2]} 회`;
+//         ctx.font = "20px Arial";
+//         ctx.fillStyle = "white";
+//         ctx.textAlign = "center";
+//         ctx.textBaseline = "middle";
+//         ctx.fillText(text, centerX, centerY);
+
+//         ctx.restore();
+//     },
+// };
 </script>
 <template>
     <Doughnut :data="data" :options="options" />

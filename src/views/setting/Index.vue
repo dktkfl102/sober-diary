@@ -1,11 +1,16 @@
 <script setup>
 import { reactive, inject } from "vue";
+import { useUserStore } from "@/stores/user.js";
+
+import LocalStorageService from "@/services/localStorage/local-storage.service";
+import LocalStorageKey from "@/services/localStorage/local-storage-key";
 
 import BottomNavigation from "@/components/layout/BottomNavigation.vue";
 import Suggestions from "@/components/setting/Suggestions.vue";
 import PrivacyPage from "@/components/common/terms/PrivacyPage.vue";
 import UseTerms from "@/components/common/terms/UseTerms.vue";
 
+const user = useUserStore();
 const state = reactive({
     isNotification: true,
     privacyShow: false,
@@ -20,6 +25,14 @@ const state = reactive({
     showDialog: false,
     popData: {},
 });
+
+const onChangeSmofingStatus = () => {
+    user.info.smokingStatus = !user.info.smokingStatus;
+    LocalStorageService.setItem(
+        LocalStorageKey.SMOKING_STATUS,
+        user.info.smokingStatus
+    );
+};
 </script>
 <template>
     <div class="mx-auto max-w-md p-4">
@@ -37,6 +50,21 @@ const state = reactive({
             <li class="flex items-center justify-between bg-gray-800 p-4">
                 <span class="text-lg font-medium">알림</span>
                 <span class="text-sm text-gray-400">On</span>
+            </li>
+            <li
+                class="flex items-center justify-between bg-gray-800 p-4"
+                @click="onChangeSmofingStatus"
+            >
+                <span class="text-lg font-medium">흡연체크</span>
+                <span
+                    class="text-sm text-gray-400 transition duration-500 ease-in-out"
+                    :class="
+                        user.info.smokingStatus
+                            ? 'font-semibold text-blue-500'
+                            : 'text-gray-400'
+                    "
+                    >{{ user.info.smokingStatus ? "On" : "Off" }}</span
+                >
             </li>
             <li class="flex items-center justify-between bg-gray-800 p-4">
                 <span class="text-lg font-medium">앱 버전</span>
@@ -61,7 +89,8 @@ const state = reactive({
     <BottomNavigation></BottomNavigation>
 
     <Suggestions
-        :show="state.suggestionsShow"
+        v-model:show="state.suggestionsShow"
+        :user="user.info.id"
         @close="state.suggestionsShow = false"
     />
     <PrivacyPage :show="state.privacyShow" @close="state.privacyShow = false" />

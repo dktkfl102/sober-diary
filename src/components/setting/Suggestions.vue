@@ -1,39 +1,47 @@
 <script setup>
 import { ref } from "vue";
+import userSql from "@/services/sql/user.sql";
 // import { useToastStore } from "@/stores/toast";
 
 const props = defineProps({
-    show: Boolean,
+    user: String,
 });
+const show = defineModel("show", { type: Boolean });
+
 // const toast = useToastStore();
 
 const contents = ref("");
 const sendSuggestion = async () => {
     if (contents.value.length < 10 || contents.value.length > 300) {
-        toast.msg = "건의 사항은 10자에서 300자까지 입력이 가능해요.";
-        toast.color = "red";
-        toast.show = true;
+        alert("건의 사항은 10자에서 300자까지 입력이 가능해요.");
+        // toast.color = "red";
+        // toast.show = true;
         return;
     }
 
-    // try {
-    //     await ButlerService.sendSuggestion(contents.value);
-    //     toast.msg = "전송이 완료되었어요! 소중한 의견 감사해요!";
-    //     toast.show = true;
-    //     emits("close");
-    //     contents.value = "";
-    // } catch (e) {
-    //     if (e) {
-    //         toast.msg = e;
-    //     } else toast.msg = "건의사항 보내기에 실패했어요. 다시 시도해주세요.";
-    //     toast.color = "red";
-    //     toast.show = true;
-    // }
+    try {
+        await userSql.insertSuggestion({
+            user_id: props.user,
+            contents: contents.value,
+        });
+        // toast.msg = "전송이 완료되었어요! 소중한 의견 감사해요!";
+        // toast.show = true;
+        // emits("close");
+        contents.value = "";
+        show.value = false;
+    } catch (e) {
+        console.log(e);
+        // if (e) {
+        //     toast.msg = e;
+        // } else toast.msg = "건의사항 보내기에 실패했어요. 다시 시도해주세요.";
+        // toast.color = "red";
+        // toast.show = true;
+    }
 };
 const emits = defineEmits(["close"]);
 </script>
 <template>
-    <v-dialog max-width="500" :model-value="props.show" persistent>
+    <v-dialog max-width="500" v-model="show">
         <v-card rounded="lg">
             <v-card-title class="d-flex justify-space-between align-center">
                 <div class="text-xl font-semibold">의견 보내기</div>
@@ -55,7 +63,6 @@ const emits = defineEmits(["close"]);
                     variant="outlined"
                     v-model="contents"
                     persistent-counter
-                    max-errors="300자 까지만 입력이 가능해요"
                 ></v-textarea>
 
                 <div class="mb-2 font-semibold">

@@ -19,7 +19,17 @@ class UserSQLService {
             .single();
 
         if (error) {
-            throw new Error("Error inserting user:", error);
+            throw new Error("Error getting user:", error);
+        }
+
+        return data;
+    }
+
+    async insertSuggestion(params) {
+        const { data, error } = await db.from("suggestions").insert(params);
+
+        if (error) {
+            throw new Error("Error inserting suggestion:", error);
         }
 
         return data;

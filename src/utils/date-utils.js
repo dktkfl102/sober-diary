@@ -103,4 +103,11 @@ export default class DateUtils {
 
         return result.trim();
     }
+
+    static convertToKST(date) {
+        const utcDate = new Date(date);
+        const kstOffset = 9 * 60 * 60 * 1000;
+        const kstDate = new Date(utcDate.getTime() + kstOffset);
+        return kstDate;
+    }
 }

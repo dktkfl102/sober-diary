@@ -30,12 +30,24 @@ const updateLogdate = () => {
 
 const writeDiary = async () => {
     try {
+        const isDuplicated = await checkDuplicateion();
+        if (isDuplicated) return;
+
+        diaryData.logDate = DateUtils.convertToKST(diaryData.logDate); // 서버에 전송전 KST 변환
         await diarySql.insert(diaryData);
         emits("commit");
         show.value = false;
     } catch (e) {
         console.log(e);
     }
+};
+
+const checkDuplicateion = async () => {
+    const item = await diarySql.getSpecificDate(state.formateedLogDate);
+    if (item.length > 0) {
+        alert("한 날짜에 한 개의 일지만 작성이 가능해요");
+        return true;
+    } else return false;
 };
 updateLogdate();
 </script>

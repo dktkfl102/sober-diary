@@ -61,6 +61,20 @@ class DiarySQLService {
 
         return data;
     }
+
+    async getSpecificDate(date) {
+        const { data, error } = await db
+            .from("diary")
+            .select()
+            .eq("user_id", user_id)
+            .eq("log_date", date);
+
+        if (error) {
+            throw new Error("Error getting specific date diary:", error);
+        }
+
+        return data;
+    }
 }
 
 export default new DiarySQLService();

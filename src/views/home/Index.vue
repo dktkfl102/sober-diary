@@ -81,7 +81,7 @@ const calendarOptions = reactive({
     <div class="m-4">
         <FullCalendar :options="calendarOptions" />
     </div>
-    <div class="mx-4 pb-20">
+    <div class="mx-4 pb-32">
         <div class="mb-1 flex flex-col items-end">
             <span class="text-xs text-gray-400">2024년 11월 금주 일</span
             ><span>2일</span>

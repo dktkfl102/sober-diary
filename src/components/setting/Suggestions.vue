@@ -1,10 +1,14 @@
 <script setup>
 import { ref } from "vue";
+
 import userSql from "@/services/sql/user.sql";
+import DateUtils from "@/utils/date-utils";
+import LocalStorageService from "@/services/localStorage/local-storage.service";
+import LocalStorageKey from "@/services/localStorage/local-storage-key";
 // import { useToastStore } from "@/stores/toast";
 
 const props = defineProps({
-    user: String,
+    user: Number,
 });
 const show = defineModel("show", { type: Boolean });
 
@@ -20,10 +24,14 @@ const sendSuggestion = async () => {
     }
 
     try {
+        const formattedToday = DateUtils.getTodayFormatDate();
+        const isDuplication = checkDuplicateion(formattedToday);
+        if (isDuplication) return;
         await userSql.insertSuggestion({
             user_id: props.user,
             contents: contents.value,
         });
+        saveTodayDate(formattedToday);
         // toast.msg = "전송이 완료되었어요! 소중한 의견 감사해요!";
         // toast.show = true;
         // emits("close");
@@ -38,6 +46,24 @@ const sendSuggestion = async () => {
         // toast.show = true;
     }
 };
+
+const checkDuplicateion = (formattedToday) => {
+    const check = LocalStorageService.getItem(
+        LocalStorageKey.SUGGESTION_DATE + formattedToday
+    );
+    if (check) {
+        alert("의견은 하루에 하나씩만 보낼 수 있어요");
+        return true;
+    }
+};
+
+const saveTodayDate = (formattedToday) => {
+    LocalStorageService.setItem(
+        LocalStorageKey.SUGGESTION_DATE + formattedToday,
+        true
+    );
+};
+
 const emits = defineEmits(["close"]);
 </script>
 <template>

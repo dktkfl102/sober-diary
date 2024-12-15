@@ -27,7 +27,8 @@ class DiarySQLService {
         const { data, error } = await db
             .from("diary")
             .select()
-            .eq("user_id", user_id);
+            .eq("user_id", user_id)
+            .order("log_date", { ascending: false });
 
         if (error) {
             throw new Error("Error getting recent diary:", error);

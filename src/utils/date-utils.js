@@ -40,7 +40,8 @@ export default class DateUtils {
         return `${month}월 ${day}일`;
     }
 
-    static getYearAndMonth(date = new Date()) {
+    static getYearAndMonth(date = null) {
+        date = date || new Date();
         const year = date.getFullYear();
         const month = this.leftPad(date.getMonth() + 1);
 

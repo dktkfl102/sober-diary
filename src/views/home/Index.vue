@@ -16,18 +16,43 @@ const list = ref([]);
 
 onMounted(async () => {
     try {
-        list.value = await diarySql.getRecentList();
+        await getRecentDiary();
     } catch (e) {
         console.log(e);
     }
 });
+
+const getRecentDiary = async () => {
+    try {
+        list.value = await diarySql.getRecentList();
+        addEventsOnCalendar();
+    } catch (e) {
+        console.log(e);
+    }
+};
+
+// date에 해당하는 월의 데이터만 달력에 표시해줌
+const addEventsOnCalendar = (date = null) => {
+    const formattedToday = DateUtils.getYearAndMonth(date);
+    calendarOptions.events = [];
+    for (let i = 0; i < list.value.length; i++) {
+        const item = list.value[i];
+        if (item.log_date.startsWith(formattedToday)) {
+            calendarOptions.events.push({
+                start: item.log_date,
+                display: "background",
+                backgroundColor: scoreColors[item.score],
+            });
+        } else continue;
+    }
+};
 
 const onClickDate = (e) => {
     console.log(e);
 };
 
 const onChangeMonth = (e) => {
-    console.log(e.view.getCurrentData());
+    addEventsOnCalendar(e.view.getCurrentData().currentDate);
 };
 
 const calendarOptions = reactive({
@@ -46,18 +71,7 @@ const calendarOptions = reactive({
     validRange: {
         end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
     },
-    events: [
-        {
-            start: "2024-11-09",
-            display: "background",
-            backgroundColor: "#fca5a5",
-        },
-        {
-            start: "2024-11-02",
-            display: "background",
-            backgroundColor: "#4ade80",
-        },
-    ],
+    events: [],
     buttonText: {
         today: "오늘",
     },
@@ -67,7 +81,7 @@ const calendarOptions = reactive({
     <div class="m-4">
         <FullCalendar :options="calendarOptions" />
     </div>
-    <div class="mx-4 pb-10">
+    <div class="mx-4 pb-20">
         <div class="mb-1 flex flex-col items-end">
             <span class="text-xs text-gray-400">2024년 11월 금주 일</span
             ><span>2일</span>
@@ -104,6 +118,6 @@ const calendarOptions = reactive({
     >
         <v-icon icon="mdi-plus"></v-icon>
     </div>
-    <AddDirary v-model:show="addDirayShow" />
+    <AddDirary v-model:show="addDirayShow" @commit="getRecentDiary" />
     <BottomNavigation></BottomNavigation>
 </template>

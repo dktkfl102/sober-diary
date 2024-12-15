@@ -6,7 +6,7 @@ import DateUtils from "@/utils/date-utils";
 import { alcholeMessages, scoreColors } from "@/constants/alchole";
 
 const show = defineModel("show", { type: Boolean });
-const emits = defineEmits(["close"]);
+const emits = defineEmits(["commit"]);
 const diaryData = reactive({
     score: 1,
     logDate: new Date(),
@@ -31,6 +31,7 @@ const updateLogdate = () => {
 const writeDiary = async () => {
     try {
         await diarySql.insert(diaryData);
+        emits("commit");
         show.value = false;
     } catch (e) {
         console.log(e);
@@ -92,6 +93,13 @@ updateLogdate();
                     v-model="diaryData.logDate"
                     @update:modelValue="updateLogdate()"
                     :hide-header="true"
+                    :allowed-dates="
+                        (date) => {
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0); // 시간 정보를 제거하여 오늘 날짜만 남김
+                            return new Date(date) <= today; // 오늘 포함 이후 날짜만 선택 가능
+                        }
+                    "
                 ></v-date-picker>
             </v-menu>
 

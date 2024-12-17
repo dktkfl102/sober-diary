@@ -16,6 +16,8 @@ const toast = useToastStore();
 const addDirayShow = ref(false);
 const list = ref([]);
 const addPopupKey = ref(0);
+const swipeId = ref(null);
+const prevPosX = ref(null);
 
 onMounted(async () => {
     try {
@@ -29,6 +31,16 @@ const getRecentDiary = async () => {
     try {
         list.value = await diarySql.getRecentList();
         addEventsOnCalendar();
+    } catch (e) {
+        toast.showToast(e);
+    }
+};
+
+const deleteDiary = async (id) => {
+    try {
+        await diarySql.deleteDiary(id);
+        getRecentDiary();
+        toast.showToast("삭제 되었어요");
     } catch (e) {
         toast.showToast(e);
     }
@@ -56,6 +68,17 @@ const onClickDate = (e) => {
 
 const onChangeMonth = (e) => {
     addEventsOnCalendar(e.view.getCurrentData().currentDate);
+};
+
+const touchStart = (e) => {
+    prevPosX.value = e.changedTouches[0].clientX;
+};
+
+const touchEnd = (e, id) => {
+    const posX = e.changedTouches[0].clientX;
+    if (prevPosX.value > posX) {
+        swipeId.value = id;
+    } else swipeId.value = null;
 };
 
 const calendarOptions = reactive({
@@ -93,7 +116,9 @@ const calendarOptions = reactive({
             <li
                 v-for="item of list"
                 :key="item.id"
-                class="flex items-center justify-between bg-gray-800 p-4"
+                @touchstart="touchStart"
+                @touchend="touchEnd($event, item.id)"
+                class="relative flex items-center justify-between overflow-hidden bg-gray-800 p-4"
             >
                 <div class="flex items-center space-x-4">
                     <span
@@ -112,6 +137,32 @@ const calendarOptions = reactive({
                 <span class="min-w-max text-sm text-gray-400">{{
                     DateUtils.getMonthAndDay(item.log_date)
                 }}</span>
+                <div
+                    class="absolute right-[-100%] flex gap-x-2 transition-all"
+                    :class="{ 'right-1': swipeId === item.id }"
+                >
+                    <div
+                        class="flex flex-col items-center justify-center rounded-lg bg-gray-400 px-4 py-1.5"
+                    >
+                        <v-icon
+                            icon="mdi-pencil-outline"
+                            size="small"
+                            class="mb-1"
+                        />
+                        <span class="text-xs font-light">수정</span>
+                    </div>
+                    <div
+                        class="flex flex-col items-center justify-center rounded-lg bg-red-500 px-4 py-1.5"
+                        @click="deleteDiary(item.id)"
+                    >
+                        <v-icon
+                            icon="mdi-delete-outline"
+                            size="small"
+                            class="mb-1"
+                        />
+                        <span class="text-xs font-light">삭제</span>
+                    </div>
+                </div>
             </li>
         </ul>
         <div class="flex flex-col items-center" v-else>

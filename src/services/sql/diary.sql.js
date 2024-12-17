@@ -75,6 +75,16 @@ class DiarySQLService {
 
         return data;
     }
+
+    async deleteDiary(id) {
+        const { data, error } = await db.from("diary").delete().eq("id", id);
+
+        if (error) {
+            throw new Error("Error deleting specific date diary:", error);
+        }
+
+        return data;
+    }
 }
 
 export default new DiarySQLService();

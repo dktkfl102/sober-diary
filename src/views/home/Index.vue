@@ -15,6 +15,7 @@ import AddDirary from "@/components/home/AddDirary.vue";
 const toast = useToastStore();
 const addDirayShow = ref(false);
 const list = ref([]);
+const addPopupKey = ref(0);
 
 onMounted(async () => {
     try {
@@ -124,6 +125,10 @@ const calendarOptions = reactive({
     >
         <v-icon icon="mdi-plus"></v-icon>
     </div>
-    <AddDirary v-model:show="addDirayShow" @commit="getRecentDiary" />
+    <AddDirary
+        v-model:show="addDirayShow"
+        :key="addPopupKey"
+        @commit="[getRecentDiary(), addPopupKey++]"
+    />
     <BottomNavigation></BottomNavigation>
 </template>

@@ -6,10 +6,12 @@ import DateUtils from "@/utils/date-utils";
 import BottomNavigation from "@/components/layout/BottomNavigation.vue";
 import Doughnut from "@/components/common/chart/Doughnut.vue";
 import HorizontalBar from "@/components/common/chart/HorizontalBar.vue";
+import { alcholeMessages, scoreColors } from "@/constants/alchole";
 
 const targetMonth = ref(DateUtils.getYearAndMonth());
 const chartData = ref([]);
 const chartKey = ref(0);
+const percentages = ref([]);
 const totalAlcholeCount = ref(0);
 const totalSmokingCount = ref(0);
 
@@ -35,6 +37,7 @@ const countScore = (data) => {
         scoreCounts[item.score - 1] += 1; // 점수에 맞는 인덱스 증가
     });
     chartData.value = scoreCounts;
+    percentages.value = calculatePercentages(chartData.value);
     totalAlcholeCount.value = chartData.value
         .slice(1)
         .reduce((acc, current) => acc + current, 0);
@@ -46,6 +49,13 @@ const changeDate = async (target) => {
     targetMonth.value = DateUtils.getYearAndMonth(searchDate);
     await getChartData();
     chartKey.value++;
+};
+
+const calculatePercentages = (values) => {
+    const sum = values.reduce((acc, value) => acc + value, 0);
+    const percentages = values.map((value) => ((value / sum) * 100).toFixed(2));
+
+    return percentages;
 };
 </script>
 <template>
@@ -68,21 +78,41 @@ const changeDate = async (target) => {
         </div>
         <div v-if="chartData.length > 0">
             <Doughnut :chartData="chartData" :key="chartKey" />
-            <div class="mx-4 text-lg">
-                <p class="font-semibold">
-                    총 음주 횟수 :
+            <div class="rounded-md p-5">
+                <ul>
+                    <li
+                        v-for="(item, idx) in chartData"
+                        :key="idx"
+                        class="flex justify-between"
+                    >
+                        <div class="mb-1.5 flex items-center">
+                            <div
+                                class="mr-2.5 h-2.5 w-7 rounded-full"
+                                :class="`bg-[${Object.values(scoreColors)[idx]}]`"
+                            ></div>
+                            <span class="text-base">{{
+                                Object.values(alcholeMessages)[idx]
+                            }}</span>
+                        </div>
+                        <span class="text-base font-medium"
+                            >{{ percentages[idx] }} %</span
+                        >
+                    </li>
+                </ul>
+            </div>
+            <div class="mx-4">
+                <p class="font-medium">
+                    이 달의 음주 횟수 :
                     <span class="pr-1 text-xl font-bold text-blue-500">{{
                         totalAlcholeCount
                     }}</span
                     >회
                 </p>
-                <p class="font-semibold">총 흡연 횟수 : 0회</p>
-                <p class="font-semibold">현재 챌린지 달성률</p>
-                <p class="font-semibold">12월 챌린지 달성률</p>
+                <p class="font-medium">총 흡연 횟수 : 0회</p>
             </div>
         </div>
         <!-- <div>
-            <span class="mb-3 block text-lg font-semibold"
+            <span class="mb-3 mt-5 block text-lg font-semibold"
                 >기분별 음주 기록</span
             >
             <div class="mx-2">

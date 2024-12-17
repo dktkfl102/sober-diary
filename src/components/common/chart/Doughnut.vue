@@ -43,6 +43,7 @@ const options = {
             },
         },
         legend: {
+            display: false,
             position: "bottom",
             maxWidth: 20,
             labels: {
@@ -53,7 +54,7 @@ const options = {
         },
     },
     layout: {
-        padding: 30,
+        padding: 0,
     },
 };
 
@@ -83,5 +84,7 @@ const options = {
 // };
 </script>
 <template>
-    <Doughnut :data="data" :options="options" />
+    <div class="mb-5 mt-10 flex h-40 justify-center">
+        <Doughnut :data="data" :options="options" />
+    </div>
 </template>

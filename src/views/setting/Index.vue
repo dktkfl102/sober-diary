@@ -9,6 +9,7 @@ import BottomNavigation from "@/components/layout/BottomNavigation.vue";
 import Suggestions from "@/components/setting/Suggestions.vue";
 import PrivacyPage from "@/components/common/terms/PrivacyPage.vue";
 import UseTerms from "@/components/common/terms/UseTerms.vue";
+import Reset from "@/components/setting/Reset.vue";
 
 const user = useUserStore();
 const state = reactive({
@@ -16,6 +17,7 @@ const state = reactive({
     privacyShow: false,
     useTermsShow: false,
     suggestionsShow: false,
+    regetPopupShow: false,
     customerCenter: [
         { key: "faq", name: "FAQ", icon: "frequently-asked-questions" },
         { key: "suggestions", name: "의견 보내기", icon: "message-draw" },
@@ -57,7 +59,7 @@ const onChangeSmofingStatus = () => {
             >
                 <span class="text-lg font-medium">흡연체크</span>
                 <span
-                    class="text-sm text-gray-400 transition duration-500 ease-in-out"
+                    class="text-sm transition duration-500 ease-in-out"
                     :class="
                         user.info.smokingStatus
                             ? 'font-semibold text-blue-500'
@@ -85,14 +87,18 @@ const onChangeSmofingStatus = () => {
                 <span class="text-lg font-medium">></span>
             </li>
         </ul>
+        <div class="mt-1 text-center">
+            <span
+                class="text-xs text-gray-400 underline"
+                @click="state.regetPopupShow = true"
+                >데이터 초기화</span
+            >
+        </div>
     </div>
     <BottomNavigation></BottomNavigation>
 
-    <Suggestions
-        v-model:show="state.suggestionsShow"
-        :user="user.info.id"
-        @close="state.suggestionsShow = false"
-    />
+    <Suggestions v-model:show="state.suggestionsShow" :user="user.info.id" />
+    <Reset v-model:show="state.regetPopupShow" />
     <PrivacyPage :show="state.privacyShow" @close="state.privacyShow = false" />
     <UseTerms :show="state.useTermsShow" @close="state.useTermsShow = false" />
 </template>

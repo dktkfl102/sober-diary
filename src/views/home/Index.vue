@@ -86,7 +86,7 @@ const calendarOptions = reactive({
             <span class="text-xs text-gray-400">2024년 11월 금주 일</span
             ><span>2일</span>
         </div>
-        <ul class="divide-y divide-gray-400 rounded-lg">
+        <ul class="divide-y divide-gray-400 rounded-lg" v-if="list.length > 0">
             <li
                 v-for="item of list"
                 :key="item.id"
@@ -111,6 +111,10 @@ const calendarOptions = reactive({
                 }}</span>
             </li>
         </ul>
+        <div class="flex flex-col items-center" v-else>
+            <v-icon icon="mdi-gift-open-outline" class="my-3 !w-10 !text-4xl" />
+            <p class="font-medium">오늘의 음주를 기록해보세요!</p>
+        </div>
     </div>
     <div
         @click="addDirayShow = true"

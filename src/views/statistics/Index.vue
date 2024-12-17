@@ -110,8 +110,7 @@ const calculatePercentages = (values) => {
                 </p>
                 <p class="font-medium">총 흡연 횟수 : 0회</p>
             </div>
-        </div>
-        <!-- <div>
+            <!-- <div>
             <span class="mb-3 mt-5 block text-lg font-semibold"
                 >기분별 음주 기록</span
             >
@@ -122,6 +121,13 @@ const calculatePercentages = (values) => {
                 <HorizontalBar></HorizontalBar>
             </div>
         </div> -->
+        </div>
+        <div class="mt-16 flex flex-col items-center" v-else>
+            <v-icon icon="mdi-gift-open-outline" class="my-3 !w-10 !text-4xl" />
+            <p class="text-center font-medium">
+                일지를 작성하면<br />음주량의 통계를 확인 할 수 있어요!
+            </p>
+        </div>
     </div>
     <BottomNavigation></BottomNavigation>
 </template>

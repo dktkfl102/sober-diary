@@ -1,6 +1,7 @@
 <script setup>
-import commonSql from "@/services/sql/common.sql";
 import { useCommonStore } from "./stores/common";
+import commonSql from "@/services/sql/common.sql";
+import Toast from "@/components/common/Toast.vue";
 
 const common = useCommonStore();
 const getCommonData = async () => {
@@ -16,4 +17,5 @@ getCommonData();
     <div class="font-pretendard">
         <router-view />
     </div>
+    <Toast />
 </template>

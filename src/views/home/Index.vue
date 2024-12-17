@@ -1,5 +1,6 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
+import { useToastStore } from "@/stores/toast";
 
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -11,6 +12,7 @@ import { alcholeMessages, scoreColors } from "@/constants/alchole";
 import BottomNavigation from "@/components/layout/BottomNavigation.vue";
 import AddDirary from "@/components/home/AddDirary.vue";
 
+const toast = useToastStore();
 const addDirayShow = ref(false);
 const list = ref([]);
 
@@ -18,7 +20,7 @@ onMounted(async () => {
     try {
         await getRecentDiary();
     } catch (e) {
-        console.log(e);
+        toast.showToast(e);
     }
 });
 
@@ -27,7 +29,7 @@ const getRecentDiary = async () => {
         list.value = await diarySql.getRecentList();
         addEventsOnCalendar();
     } catch (e) {
-        console.log(e);
+        toast.showToast(e);
     }
 };
 

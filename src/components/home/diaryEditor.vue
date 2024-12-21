@@ -1,11 +1,12 @@
 <script setup>
-import { reactive } from "vue";
+import { ref, onUpdated, reactive } from "vue";
 
 import diarySql from "@/services/sql/diary.sql";
 import DateUtils from "@/utils/date-utils";
 import { alcholeMessages, scoreColors } from "@/constants/alchole";
 
 const show = defineModel("show", { type: Boolean });
+const props = defineProps({ editData: Object });
 const emits = defineEmits(["commit"]);
 const diaryData = reactive({
     score: 1,
@@ -13,10 +14,22 @@ const diaryData = reactive({
     memo: "",
     categoryId: 1,
 });
+const isEdit = ref(false);
 
 const state = reactive({
     formateedLogDate: null,
     showDatePicker: false,
+});
+
+onUpdated(() => {
+    if (Object.keys(props.editData).length > 0) {
+        Object.assign(diaryData, {
+            ...props.editData,
+            logDate: new Date(props.editData.log_date),
+        });
+        isEdit.value = true;
+        updateLogdate();
+    }
 });
 
 const updateLogdate = () => {
@@ -42,6 +55,17 @@ const writeDiary = async () => {
     }
 };
 
+const updateDiary = async () => {
+    try {
+        diaryData.logDate = DateUtils.convertToKST(diaryData.logDate); // 서버에 전송전 KST 변환
+        await diarySql.update(diaryData, diaryData.id);
+        emits("commit");
+        show.value = false;
+    } catch (e) {
+        console.log(e);
+    }
+};
+
 const checkDuplicateion = async () => {
     const item = await diarySql.getSpecificDate(state.formateedLogDate);
     if (item.length > 0) {
@@ -54,7 +78,9 @@ updateLogdate();
 <template>
     <v-bottom-sheet v-model="show" max-width="500" class="font-pretendard">
         <v-card class="rounded-t-xl bg-gray-800 px-6 py-4 text-white">
-            <div class="mb-4 text-center text-xl font-semibold">기록 추가</div>
+            <div class="mb-4 text-center text-xl font-semibold">
+                기록 {{ !isEdit ? "추가" : "수정" }}
+            </div>
             <v-divider class="mb-4"></v-divider>
 
             <!-- Challenge Type Radio Buttons -->
@@ -99,6 +125,7 @@ updateLogdate();
                         label="기록할 날짜를 선택하세요"
                         readonly
                         @click="state.showDatePicker = true"
+                        :disabled="isEdit"
                     ></v-text-field>
                 </template>
                 <v-date-picker
@@ -141,7 +168,12 @@ updateLogdate();
 
             <div class="flex justify-end">
                 <v-btn text color="gray" @click="show = false">취소</v-btn>
-                <v-btn color="primary" @click="writeDiary">작성하기</v-btn>
+                <v-btn v-if="!isEdit" color="primary" @click="writeDiary"
+                    >작성하기</v-btn
+                >
+                <v-btn v-else color="primary" @click="updateDiary"
+                    >수정하기</v-btn
+                >
             </div>
         </v-card>
     </v-bottom-sheet>

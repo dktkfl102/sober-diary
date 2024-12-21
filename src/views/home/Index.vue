@@ -10,14 +10,15 @@ import diarySql from "@/services/sql/diary.sql";
 import DateUtils from "@/utils/date-utils";
 import { alcholeMessages, scoreColors } from "@/constants/alchole";
 import BottomNavigation from "@/components/layout/BottomNavigation.vue";
-import AddDirary from "@/components/home/AddDirary.vue";
+import diaryEditor from "@/components/home/diaryEditor.vue";
 
 const toast = useToastStore();
-const addDirayShow = ref(false);
+const diaryEditorShow = ref(false);
 const list = ref([]);
 const addPopupKey = ref(0);
 const swipeId = ref(null);
 const prevPosX = ref(null);
+const editData = ref({});
 
 onMounted(async () => {
     try {
@@ -38,12 +39,17 @@ const getRecentDiary = async () => {
 
 const deleteDiary = async (id) => {
     try {
-        await diarySql.deleteDiary(id);
+        await diarySql.delete(id);
         getRecentDiary();
         toast.showToast("삭제 되었어요");
     } catch (e) {
         toast.showToast(e);
     }
+};
+
+const updateDiary = async (item) => {
+    editData.value = item;
+    diaryEditorShow.value = true;
 };
 
 // date에 해당하는 월의 데이터만 달력에 표시해줌
@@ -116,7 +122,7 @@ const calendarOptions = reactive({
             <li
                 v-for="item of list"
                 :key="item.id"
-                @touchstart="touchStart"
+                @touchstart.passive="touchStart"
                 @touchend="touchEnd($event, item.id)"
                 class="relative flex items-center justify-between overflow-hidden bg-gray-800 p-4"
             >
@@ -139,10 +145,11 @@ const calendarOptions = reactive({
                 }}</span>
                 <div
                     class="absolute right-[-100%] flex gap-x-2 transition-all"
-                    :class="{ 'right-1': swipeId === item.id }"
+                    :class="{ '!right-1': swipeId === item.id }"
                 >
                     <div
                         class="flex flex-col items-center justify-center rounded-lg bg-gray-400 px-4 py-1.5"
+                        @click="updateDiary(item)"
                     >
                         <v-icon
                             icon="mdi-pencil-outline"
@@ -171,13 +178,19 @@ const calendarOptions = reactive({
         </div>
     </div>
     <div
-        @click="addDirayShow = true"
+        @click="
+            () => {
+                editData.value = {};
+                diaryEditorShow = true;
+            }
+        "
         class="fixed bottom-20 right-3 rounded-2xl bg-blue-500 p-3"
     >
         <v-icon icon="mdi-plus"></v-icon>
     </div>
-    <AddDirary
-        v-model:show="addDirayShow"
+    <diaryEditor
+        v-model:show="diaryEditorShow"
+        :editData="editData"
         :key="addPopupKey"
         @commit="[getRecentDiary(), addPopupKey++]"
     />

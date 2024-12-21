@@ -76,11 +76,31 @@ class DiarySQLService {
         return data;
     }
 
-    async deleteDiary(id) {
+    async delete(id) {
         const { data, error } = await db.from("diary").delete().eq("id", id);
 
         if (error) {
             throw new Error("Error deleting specific date diary:", error);
+        }
+
+        return data;
+    }
+
+    async update(params, id) {
+        params = {
+            score: params.score,
+            memo: params.memo,
+            category_id: params.categoryId,
+            log_date: params.logDate,
+            user_id,
+        };
+        const { data, error } = await db
+            .from("diary")
+            .update(params)
+            .eq("id", id);
+
+        if (error) {
+            throw new Error("Error updating specific date diary:", error);
         }
 
         return data;

@@ -180,7 +180,7 @@ const calendarOptions = reactive({
     <div
         @click="
             () => {
-                editData.value = {};
+                editData = {};
                 diaryEditorShow = true;
             }
         "

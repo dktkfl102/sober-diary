@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { useUserStore } from "@/stores/user.js";
 
 import diarySql from "@/services/sql/diary.sql";
 import DateUtils from "@/utils/date-utils";
@@ -8,12 +9,15 @@ import Doughnut from "@/components/common/chart/Doughnut.vue";
 import HorizontalBar from "@/components/common/chart/HorizontalBar.vue";
 import { alcholeMessages, scoreColors } from "@/constants/alchole";
 
+const user = useUserStore();
+
 const targetMonth = ref(DateUtils.getYearAndMonth());
 const chartData = ref([]);
 const chartKey = ref(0);
 const percentages = ref([]);
 const totalAlcholeCount = ref(0);
 const totalSmokingCount = ref(0);
+const isLoading = ref(false);
 
 onMounted(() => {
     getChartData();
@@ -22,9 +26,11 @@ onMounted(() => {
 const getChartData = async () => {
     const result = await diarySql.getListByMonth(targetMonth.value);
     countScore(result);
+    isLoading.value = true;
 };
 
 const countScore = (data) => {
+    totalSmokingCount.value = 0;
     if (data.length === 0) {
         chartData.value = [];
         totalAlcholeCount.value = 0;
@@ -35,6 +41,7 @@ const countScore = (data) => {
 
     data.forEach((item) => {
         scoreCounts[item.score - 1] += 1; // 점수에 맞는 인덱스 증가
+        if (item.smoked) totalSmokingCount.value++;
     });
     chartData.value = scoreCounts;
     percentages.value = calculatePercentages(chartData.value);
@@ -59,7 +66,7 @@ const calculatePercentages = (values) => {
 };
 </script>
 <template>
-    <div class="m-4 pb-20">
+    <div class="m-4 pb-20" v-if="isLoading">
         <div class="flex items-center">
             <v-icon
                 icon="mdi-chevron-left"
@@ -77,6 +84,22 @@ const calculatePercentages = (values) => {
             ></v-icon>
         </div>
         <div v-if="chartData.length > 0">
+            <div class="m-4">
+                <p class="font-medium">
+                    이 달의 음주 횟수 :
+                    <span class="pr-1 text-xl font-bold text-blue-500">{{
+                        totalAlcholeCount
+                    }}</span
+                    >회
+                </p>
+                <p class="font-medium" v-if="user.info.smokingStatus">
+                    이 달의 흡연 횟수 :
+                    <span class="pr-1 text-xl font-bold text-blue-500">{{
+                        totalSmokingCount
+                    }}</span
+                    >회
+                </p>
+            </div>
             <Doughnut :chartData="chartData" :key="chartKey" />
             <div class="rounded-md p-5">
                 <ul>
@@ -99,16 +122,6 @@ const calculatePercentages = (values) => {
                         >
                     </li>
                 </ul>
-            </div>
-            <div class="mx-4">
-                <p class="font-medium">
-                    이 달의 음주 횟수 :
-                    <span class="pr-1 text-xl font-bold text-blue-500">{{
-                        totalAlcholeCount
-                    }}</span
-                    >회
-                </p>
-                <p class="font-medium">총 흡연 횟수 : 0회</p>
             </div>
             <!-- <div>
             <span class="mb-3 mt-5 block text-lg font-semibold"

@@ -8,8 +8,6 @@ class DiarySQLService {
     async insert(params) {
         params = {
             ...params,
-            category_id: params.categoryId,
-            categoryId: undefined,
             log_date: params.logDate,
             logDate: undefined,
             user_id,
@@ -88,10 +86,9 @@ class DiarySQLService {
 
     async update(params, id) {
         params = {
-            score: params.score,
-            memo: params.memo,
-            category_id: params.categoryId,
+            ...params,
             log_date: params.logDate,
+            logDate: undefined,
             user_id,
         };
         const { data, error } = await db

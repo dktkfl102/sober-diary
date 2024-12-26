@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import { useToastStore } from "@/stores/toast";
+import { useUserStore } from "@/stores/user.js";
 
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -12,7 +13,9 @@ import { alcholeMessages, scoreColors } from "@/constants/alchole";
 import BottomNavigation from "@/components/layout/BottomNavigation.vue";
 import diaryEditor from "@/components/home/diaryEditor.vue";
 
+const user = useUserStore();
 const toast = useToastStore();
+
 const diaryEditorShow = ref(false);
 const list = ref([]);
 const addPopupKey = ref(0);
@@ -140,9 +143,23 @@ const calendarOptions = reactive({
                         }}</span>
                     </div>
                 </div>
-                <span class="min-w-max text-sm text-gray-400">{{
-                    DateUtils.getMonthAndDay(item.log_date)
-                }}</span>
+                <div class="flex min-w-max flex-col items-center">
+                    <span class="text-sm text-gray-400">{{
+                        DateUtils.getMonthAndDay(item.log_date)
+                    }}</span>
+                    <div v-if="user.info.smokingStatus">
+                        <span v-if="item.smoked"
+                            ><v-icon
+                                icon="mdi-smoking"
+                                class="!text-base text-gray-200"
+                        /></span>
+                        <span v-else
+                            ><v-icon
+                                icon="mdi-smoking-off"
+                                class="!text-base text-gray-200"
+                        /></span>
+                    </div>
+                </div>
                 <div
                     class="absolute right-[-100%] flex gap-x-2 transition-all"
                     :class="{ '!right-1': swipeId === item.id }"

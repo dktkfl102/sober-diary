@@ -1,18 +1,21 @@
 <script setup>
 import { ref, onUpdated, reactive } from "vue";
+import { useUserStore } from "@/stores/user.js";
 
 import diarySql from "@/services/sql/diary.sql";
 import DateUtils from "@/utils/date-utils";
 import { alcholeMessages, scoreColors } from "@/constants/alchole";
 
+const user = useUserStore();
 const show = defineModel("show", { type: Boolean });
 const props = defineProps({ editData: Object });
 const emits = defineEmits(["commit"]);
+
 const diaryData = reactive({
     score: 1,
     logDate: new Date(),
     memo: "",
-    categoryId: 1,
+    smoked: false,
 });
 const isEdit = ref(false);
 
@@ -83,34 +86,6 @@ updateLogdate();
             </div>
             <v-divider class="mb-4"></v-divider>
 
-            <!-- Challenge Type Radio Buttons -->
-
-            <span class="mt-1 block text-lg font-semibold">카테고리</span>
-            <v-card>
-                <v-card-text class="flex justify-between">
-                    <v-btn
-                        class="w-47/100"
-                        :class="{
-                            '!bg-gradient-to-r from-violet-400 to-pink-500 text-white':
-                                diaryData.categoryId === 1,
-                        }"
-                        :active="diaryData.categoryId === 1"
-                        @click="diaryData.categoryId = 1"
-                        ><span class="text-base">음주</span></v-btn
-                    >
-                    <v-btn
-                        class="w-47/100"
-                        :class="{
-                            '!bg-gradient-to-r from-violet-400 to-pink-500 text-white':
-                                diaryData.categoryId === 2,
-                        }"
-                        :active="diaryData.categoryId === 2"
-                        @click="diaryData.categoryId = 2"
-                        ><span class="text-base">흡연</span></v-btn
-                    >
-                </v-card-text>
-            </v-card>
-
             <v-menu
                 v-model="state.showDatePicker"
                 :close-on-content-click="false"
@@ -156,6 +131,34 @@ updateLogdate();
                 :step="1"
                 :color="scoreColors[diaryData.score]"
             ></v-slider>
+
+            <template v-if="user.info.smokingStatus">
+                <span class="mt-1 block text-lg font-semibold">흡연</span>
+                <v-card>
+                    <v-card-text class="flex justify-between">
+                        <v-btn
+                            class="w-47/100"
+                            :class="{
+                                '!bg-gradient-to-r from-violet-400 to-pink-500 text-white':
+                                    diaryData.smoked,
+                            }"
+                            :active="diaryData.smoked"
+                            @click="diaryData.smoked = true"
+                            ><span class="text-base">O</span></v-btn
+                        >
+                        <v-btn
+                            class="w-47/100"
+                            :class="{
+                                '!bg-gradient-to-r from-violet-400 to-pink-500 text-white':
+                                    !diaryData.smoked,
+                            }"
+                            :active="!diaryData.smoked"
+                            @click="diaryData.smoked = false"
+                            ><span class="text-base">X</span></v-btn
+                        >
+                    </v-card-text>
+                </v-card>
+            </template>
 
             <v-textarea
                 v-model="diaryData.memo"

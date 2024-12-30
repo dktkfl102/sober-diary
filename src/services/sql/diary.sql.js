@@ -102,6 +102,29 @@ class DiarySQLService {
 
         return data;
     }
+
+    async checkChallenge(start_date, endDate, category_id) {
+        const { count, error } = await db
+            .from("diary")
+            .select("*", { count: "exact", head: true })
+            .eq("user_id", user_id)
+            .gte("log_date", start_date)
+            .lte("log_date", endDate)
+            .eq(
+                category_id === 1 ? "score" : "smoked",
+                category_id === 1 ? 1 : false
+            );
+
+        if (error) {
+            console.log(JSON.stringify(error));
+            throw new Error(
+                "Error checking challenge succeeding through diary:",
+                error
+            );
+        }
+
+        return count;
+    }
 }
 
 export default new DiarySQLService();

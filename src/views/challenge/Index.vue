@@ -76,7 +76,12 @@ const finishedAddChallenge = () => {
                                 DateUtils.getTodayFormatDate(
                                     new Date(
                                         Date.now() +
-                                            item.duration * 24 * 60 * 60 * 1000
+                                            item.duration *
+                                                24 *
+                                                60 *
+                                                60 *
+                                                1000 -
+                                            24 * 60 * 60 * 1000
                                     )
                                 )
                             }}
@@ -144,7 +149,12 @@ const finishedAddChallenge = () => {
                                 DateUtils.getTodayFormatDate(
                                     new Date(
                                         Date.now() +
-                                            item.duration * 24 * 60 * 60 * 1000
+                                            item.duration *
+                                                24 *
+                                                60 *
+                                                60 *
+                                                1000 -
+                                            24 * 60 * 60 * 1000
                                     )
                                 )
                             }}

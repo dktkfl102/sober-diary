@@ -38,6 +38,34 @@ class ChallengeSQLService {
 
         return data;
     }
+
+    async getInProgressList() {
+        const { data, error } = await db
+            .from("user_challenges")
+            .select("*")
+            .eq("user_id", user_id)
+            .eq("status", "in_progress")
+            .in("challenge_id", [1, 2]);
+
+        if (error) {
+            throw new Error("Error getting in progress challenges:", error);
+        }
+
+        return data;
+    }
+
+    async updateStatus(id, result) {
+        const { data, error } = await db
+            .from("user_challenges")
+            .update({ status: result })
+            .eq("id", id);
+
+        if (error) {
+            throw new Error("Error getting in progress challenges:", error);
+        }
+
+        return data;
+    }
 }
 
 export default new ChallengeSQLService();

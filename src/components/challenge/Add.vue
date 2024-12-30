@@ -35,6 +35,9 @@ const addChallenge = async () => {
     }
 
     try {
+        challengeData.startDate = DateUtils.convertToKST(
+            challengeData.startDate
+        ); // 서버에 전송전 KST 변환
         await challengeSql.insert(challengeData);
         emits("commit");
     } catch (e) {
@@ -83,7 +86,7 @@ updateStartDate();
                 </v-card>
             </div>
 
-            <dvi class="mb-4 mt-1" v-if="user.info.smokingStatus">
+            <div class="mb-4 mt-1" v-if="user.info.smokingStatus">
                 <span class="block text-lg font-semibold">카테고리</span>
                 <v-card class="!shadow-none">
                     <v-card-text class="flex justify-between">
@@ -104,7 +107,7 @@ updateStartDate();
                         </v-btn>
                     </v-card-text>
                 </v-card>
-            </dvi>
+            </div>
 
             <v-text-field
                 v-if="challengeData.challengeId === 2"

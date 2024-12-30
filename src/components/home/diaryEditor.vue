@@ -3,6 +3,7 @@ import { ref, onUpdated, reactive } from "vue";
 import { useUserStore } from "@/stores/user.js";
 
 import diarySql from "@/services/sql/diary.sql";
+import challengeSql from "@/services/sql/challenge.sql";
 import DateUtils from "@/utils/date-utils";
 import { alcholeMessages, scoreColors } from "@/constants/alchole";
 
@@ -51,8 +52,7 @@ const writeDiary = async () => {
 
         diaryData.logDate = DateUtils.convertToKST(diaryData.logDate); // 서버에 전송전 KST 변환
         await diarySql.insert(diaryData);
-        emits("commit");
-        show.value = false;
+        await checkCurrentChallenge();
     } catch (e) {
         console.log(e);
     }
@@ -75,6 +75,56 @@ const checkDuplicateion = async () => {
         alert("한 날짜에 한 개의 일지만 작성이 가능해요");
         return true;
     } else return false;
+};
+
+const checkCurrentChallenge = async () => {
+    try {
+        const challenges = await challengeSql.getInProgressList();
+        if (challenges.length === 0) return;
+
+        // 최대 2개
+        for (const challenge of challenges) {
+            const {
+                id: challengeId,
+                category_id,
+                start_date: startDate,
+                duration,
+            } = challenge;
+            const endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + duration - 1);
+
+            // 작성한 날짜로 챌린지 실패/성공 여부 확인
+            // 날짜에 해당되는지 확인
+            const entryDate = new Date(state.formateedLogDate); // diaryData.logDate값은 위에서 변환해놨으므로
+            if (entryDate >= new Date(startDate) && entryDate <= endDate) {
+                // 실패체크
+                if (
+                    (category_id === 1 && diaryData.score >= 2) ||
+                    (category_id === 2 && diaryData.smoked === true)
+                ) {
+                    await challengeSql.updateStatus(challengeId, "failed");
+                    continue;
+                }
+
+                // 성공체크
+                const diaryCount = await diarySql.checkChallenge(
+                    startDate,
+                    DateUtils.getTodayFormatDate(endDate),
+                    category_id
+                );
+                const isFullCoverage = diaryCount === duration;
+                if (isFullCoverage) {
+                    await challengeSql.updateStatus(challengeId, "successful");
+                }
+            }
+        }
+    } catch (e) {
+        console.log(e);
+    } finally {
+        // 챌린지 확인 성공 실패 여부와 관계없이 처리
+        emits("commit");
+        show.value = false;
+    }
 };
 updateLogdate();
 </script>

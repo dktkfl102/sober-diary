@@ -66,6 +66,22 @@ class ChallengeSQLService {
 
         return data;
     }
+
+    async getRangeChallengeByCategory(category_id) {
+        const { data, error } = await db
+            .from("user_challenges")
+            .select()
+            .eq("user_id", user_id)
+            .eq("challenge_id", 1)
+            .eq("category_id", category_id)
+            .eq("status", "in_progress");
+
+        if (error) {
+            throw new Error("Error getting specific date diary:", error);
+        }
+
+        return data;
+    }
 }
 
 export default new ChallengeSQLService();

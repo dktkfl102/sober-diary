@@ -27,7 +27,9 @@ const state = reactive({
 onMounted(() => {});
 
 const addChallenge = async () => {
-    // TODO 유효성 검사 추가 필요
+    const isDuplicated = await checkDuplicateion();
+    if (isDuplicated) return;
+
     if (challengeData.challengeId === 1)
         challengeData.title = challengeData.duration + "일 챌린지";
     else if (challengeData.challengeId === 2) {
@@ -40,6 +42,20 @@ const addChallenge = async () => {
         ); // 서버에 전송전 KST 변환
         await challengeSql.insert(challengeData);
         emits("commit");
+    } catch (e) {
+        console.log(e);
+    }
+};
+
+const checkDuplicateion = async () => {
+    try {
+        const item = await challengeSql.getRangeChallengeByCategory(
+            challengeData.challengeId
+        );
+        if (item.length > 0) {
+            alert("기간 챌린지는 카테고리당 하나만 가능해요");
+            return true;
+        } else return false;
     } catch (e) {
         console.log(e);
     }

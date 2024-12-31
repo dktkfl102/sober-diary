@@ -27,11 +27,16 @@ const state = reactive({
 onMounted(() => {});
 
 const addChallenge = async () => {
-    const isDuplicated = await checkDuplicateion();
-    if (isDuplicated) return;
+    if (challengeData.challengeId === 1) {
+        const isDuplicated = await checkDuplicateion();
+        if (isDuplicated) return;
+    }
 
     if (challengeData.challengeId === 1)
-        challengeData.title = challengeData.duration + "일 챌린지";
+        challengeData.title =
+            challengeData.categoryId === 1
+                ? "금주 "
+                : "금연 " + challengeData.duration + "일 챌린지";
     else if (challengeData.challengeId === 2) {
         challengeData.duration = null;
     }
@@ -50,7 +55,7 @@ const addChallenge = async () => {
 const checkDuplicateion = async () => {
     try {
         const item = await challengeSql.getRangeChallengeByCategory(
-            challengeData.challengeId
+            challengeData.categoryId
         );
         if (item.length > 0) {
             alert("기간 챌린지는 카테고리당 하나만 가능해요");

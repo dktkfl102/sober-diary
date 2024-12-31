@@ -5,11 +5,14 @@ import challengeSql from "@/services/sql/challenge.sql";
 import DateUtils from "@/utils/date-utils";
 import BottomNavigation from "@/components/layout/BottomNavigation.vue";
 import Add from "@/components/challenge/Add.vue";
+import StatusEdit from "@/components/challenge/StatusEdit.vue";
 
 const ingList = ref([]);
 const completedList = ref([]);
 const addPopsShow = ref(false);
 const addPopsKey = ref(0);
+const statusEditPopsShow = ref(false);
+const statusEditId = ref(null);
 
 onMounted(async () => {
     getRecentList();
@@ -35,6 +38,23 @@ const finishedAddChallenge = () => {
     addPopsShow.value = false;
     addPopsKey.value++;
 };
+
+const editStatus = async (val) => {
+    try {
+        const result = val ? "successful" : "failed";
+        await challengeSql.updateStatus(statusEditId.value, result);
+        await getRecentList();
+        statusEditPopsShow.value = false;
+    } catch (e) {
+        console.log(e);
+    }
+};
+
+const clickProgressChalllenge = (id, challengeId) => {
+    if (challengeId === 1) return;
+    statusEditId.value = id;
+    statusEditPopsShow.value = true;
+};
 </script>
 <template>
     <Add
@@ -51,6 +71,7 @@ const finishedAddChallenge = () => {
                     class="relative animate-pulse overflow-hidden rounded-lg border-2 border-blue-500"
                     v-for="item of ingList"
                     :key="item.id"
+                    @click="clickProgressChalllenge(item.id, item.challenge_id)"
                 >
                     <span
                         class="absolute right-2 top-2 rounded bg-blue-500 px-2 py-1 text-xs font-semibold text-white"
@@ -182,5 +203,6 @@ const finishedAddChallenge = () => {
     >
         <v-icon icon="mdi-plus"></v-icon>
     </div>
+    <StatusEdit v-model:show="statusEditPopsShow" @commit="editStatus" />
     <BottomNavigation></BottomNavigation>
 </template>

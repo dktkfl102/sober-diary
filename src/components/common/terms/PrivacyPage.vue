@@ -16,15 +16,15 @@ const emits = defineEmits(["close"]);
                 <h2 class="text-2xl font-semibold">제1조(개인정보 수집)</h2>
                 <ol class="ml-5 mt-2 list-decimal">
                     <li class="list-decimal">
-                        서비스의 내용: 반려동물의 건강 데이터 기록 수집 및 관리.
+                        서비스의 내용: 음주 혹은 흡연 데이터 기록 수집 및 관리.
                     </li>
                     <li class="list-decimal">
                         서비스 제공에 필요한 개인정보의 수집
                         <ul class="ml-8 mt-1 list-disc">
-                            <li class="list-disc">필수정보: UUID</li>
-                            <li class="list-disc">
+                            <li class="list-disc">필수정보: 없음</li>
+                            <!-- <li class="list-disc">
                                 선택정보: 이름, 비밀번호, 이메일, 반려동물 정보
-                            </li>
+                            </li> -->
                         </ul>
                     </li>
                     <li class="list-decimal">
@@ -71,8 +71,8 @@ const emits = defineEmits(["close"]);
                         대한 통계 등을 목적으로 개인정보를 처리합니다.
                     </li>
                     <li class="list-decimal">
-                        반려동물의 기타 정보 : 입력하신 반려동물의 정보는 서비스
-                        개발에 활용될 수 있습니다.
+                        기타 정보 : 입력하신 기록은 서비스 개발에 활용될 수
+                        있습니다.
                     </li>
                 </ol>
             </section>
@@ -102,10 +102,6 @@ const emits = defineEmits(["close"]);
                         <li class="list-disc">
                             예외사유 : 본인이 작성한 게시글, 댓글 등은 삭제되지
                             않습니다. 탈퇴전 직접 삭제가 가능합니다.
-                        </li>
-                        <li class="list-disc">
-                            예외사유 : 신원을 특정할 수 없는 반려동물의 데이터는
-                            삭제되지 않습니다. 탈퇴전 직접 삭제가 가능합니다.
                         </li>
                     </ul>
                 </ol>
@@ -189,11 +185,8 @@ const emits = defineEmits(["close"]);
                             없는 기술적 방법을 사용합니다.
                         </li>
                         <li class="list-disc">
-                            예외: 단, 신원을 특정할 수 없는 댓글, 게시글,
-                            반려동물 정보 등은 삭제되지 않으며 탈퇴 전 유저가
-                            직접 삭제해야 합니다. 신원을 특정할 수 없는
-                            반려동물의 데이터는 서비스 개발에 활용될 수
-                            있습니다.
+                            예외: 단, 신원을 특정할 수 없는 댓글, 게시글 등은
+                            삭제되지 않으며 탈퇴 전 유저가 직접 삭제해야 합니다.
                         </li>
                     </ul>
                 </ol>
@@ -276,11 +269,11 @@ const emits = defineEmits(["close"]);
                 <ul class="ml-8 mt-2 list-disc">
                     <li class="list-disc">
                         개인정보 관리 책임자: 김소연, 소속/직위: 대표, 연락처:
-                        010-9966-4003
+                        dktkfl102@gmail.com
                     </li>
                     <li class="list-disc">
                         개인정보 기술 관리 책임자: 김소연, 소속/직위: 대표,
-                        연락처: 010-9966-4003
+                        연락처: dktkfl102@gmail.com
                     </li>
                 </ul>
                 <p class="mt-2">
@@ -317,7 +310,7 @@ const emits = defineEmits(["close"]);
                         고지합니다.
                     </li>
                     <li class="list-disc">
-                        이 개인정보처리방침은 2024년 4월 1부터 적용됩니다.
+                        이 개인정보처리방침은 2025년 1월 1부터 적용됩니다.
                     </li>
                 </ul>
             </section>

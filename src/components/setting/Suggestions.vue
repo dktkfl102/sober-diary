@@ -34,7 +34,7 @@ const sendSuggestion = async () => {
         saveTodayDate(formattedToday);
         // toast.msg = "전송이 완료되었어요! 소중한 의견 감사해요!";
         // toast.show = true;
-        // emits("close");
+        // show.value = false;
         contents.value = "";
         show.value = false;
     } catch (e) {
@@ -63,8 +63,6 @@ const saveTodayDate = (formattedToday) => {
         true
     );
 };
-
-const emits = defineEmits(["close"]);
 </script>
 <template>
     <v-dialog max-width="500" v-model="show">
@@ -75,7 +73,7 @@ const emits = defineEmits(["close"]);
                 <v-btn
                     icon="mdi-close"
                     variant="text"
-                    @click="$emit('close')"
+                    @click="show = false"
                 ></v-btn>
             </v-card-title>
 

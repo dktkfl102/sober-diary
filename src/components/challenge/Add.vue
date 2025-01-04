@@ -30,14 +30,11 @@ const addChallenge = async () => {
     if (challengeData.challengeId === 1) {
         const isDuplicated = await checkDuplicateion();
         if (isDuplicated) return;
-    }
-
-    if (challengeData.challengeId === 1)
         challengeData.title =
             challengeData.categoryId === 1
                 ? "금주 "
                 : "금연 " + challengeData.duration + "일 챌린지";
-    else if (challengeData.challengeId === 2) {
+    } else if (challengeData.challengeId === 2) {
         challengeData.duration = null;
     }
 

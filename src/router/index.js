@@ -38,7 +38,7 @@ const router = createRouter({
 
 const env = import.meta.env.MODE;
 router.beforeEach((to, from, next) => {
-    if (!window.ReactNativeWebView) {
+    if (!navigator.userAgent.includes("ReactNative")) {
         return (window.location.href = "https://www.naver.com");
     }
     next();

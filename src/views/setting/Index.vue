@@ -49,10 +49,10 @@ const onChangeSmofingStatus = () => {
                     >의견 보내기</span
                 >
             </li>
-            <li class="flex items-center justify-between bg-gray-800 p-4">
+            <!-- <li class="flex items-center justify-between bg-gray-800 p-4">
                 <span class="text-lg font-medium">알림</span>
                 <span class="text-sm text-gray-400">On</span>
-            </li>
+            </li> -->
             <li
                 class="flex items-center justify-between bg-gray-800 p-4"
                 @click="onChangeSmofingStatus"

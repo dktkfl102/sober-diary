@@ -117,10 +117,10 @@ const calendarOptions = reactive({
         <FullCalendar :options="calendarOptions" />
     </div>
     <div class="mx-4 pb-32">
-        <div class="mb-1 flex flex-col items-end">
-            <span class="text-xs text-gray-400">2024년 11월 금주 일</span
-            ><span>2일</span>
-        </div>
+        <!-- <div class="mb-1 flex flex-col items-end">
+            <span class="text-xs text-gray-400">2024년 12월 금주 일</span
+            ><span>3일</span>
+        </div> -->
         <ul class="divide-y divide-gray-400 rounded-lg" v-if="list.length > 0">
             <li
                 v-for="item of list"
@@ -190,7 +190,10 @@ const calendarOptions = reactive({
             </li>
         </ul>
         <div class="flex flex-col items-center" v-else>
-            <v-icon icon="mdi-gift-open-outline" class="my-3 !w-10 !text-4xl" />
+            <v-icon
+                icon="mdi-gift-open-outline"
+                class="mb-3 mt-6 !w-10 !text-4xl"
+            />
             <p class="font-medium">오늘의 음주를 기록해보세요!</p>
         </div>
     </div>

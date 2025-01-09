@@ -187,6 +187,7 @@ updateStartDate();
                 label="목표 일 수"
                 variant="underlined"
                 class="mb-4"
+                type="number"
                 @input="
                     challengeData.duration = Formatters.inputNumber(
                         challengeData.duration

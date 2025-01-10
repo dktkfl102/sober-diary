@@ -165,6 +165,7 @@ const calendarOptions = reactive({
                 <div
                     class="absolute right-[-100%] flex gap-x-2 transition-all"
                     :class="{ '!right-1': swipeId === item.id }"
+                    @click.stop
                 >
                     <div
                         class="flex flex-col items-center justify-center rounded-lg bg-gray-400 px-4 py-1.5"

@@ -53,6 +53,7 @@ const deleteDiary = async (id) => {
 const updateDiary = async (item) => {
     editData.value = item;
     diaryEditorShow.value = true;
+    swipeId.value = null;
 };
 
 // date에 해당하는 월의 데이터만 달력에 표시해줌
@@ -126,8 +127,8 @@ const calendarOptions = reactive({
             <li
                 v-for="item of list"
                 :key="item.id"
-                @touchstart.self.passive="touchStart"
-                @touchend.self="touchEnd($event, item.id)"
+                @touchstart.passive="touchStart"
+                @touchend="touchEnd($event, item.id)"
                 class="relative flex items-center justify-between overflow-hidden bg-gray-800 p-4"
             >
                 <div class="flex items-center space-x-4">
@@ -162,7 +163,7 @@ const calendarOptions = reactive({
                     </div>
                 </div>
                 <div
-                    class="absolute right-[-100%] flex gap-x-2 transition-all"
+                    class="absolute right-[-100%] z-10 flex gap-x-2 transition-all"
                     :class="{ '!right-1': swipeId === item.id }"
                 >
                     <div

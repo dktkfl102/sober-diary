@@ -85,6 +85,7 @@ const touchStart = (e) => {
 };
 
 const touchEnd = (e, id) => {
+    if (swipeId.value === id) return;
     const posX = e.changedTouches[0].clientX;
     if (prevPosX.value > posX) {
         swipeId.value = id;
@@ -165,11 +166,10 @@ const calendarOptions = reactive({
                 <div
                     class="absolute right-[-100%] flex gap-x-2 transition-all"
                     :class="{ '!right-1': swipeId === item.id }"
-                    @click.stop
                 >
                     <div
                         class="flex flex-col items-center justify-center rounded-lg bg-gray-400 px-4 py-1.5"
-                        @click.stop="updateDiary(item)"
+                        @click="updateDiary(item)"
                     >
                         <v-icon
                             icon="mdi-pencil-outline"
@@ -180,7 +180,7 @@ const calendarOptions = reactive({
                     </div>
                     <div
                         class="flex flex-col items-center justify-center rounded-lg bg-red-500 px-4 py-1.5"
-                        @click.stop="deleteDiary(item.id)"
+                        @click="deleteDiary(item.id)"
                     >
                         <v-icon
                             icon="mdi-delete-outline"

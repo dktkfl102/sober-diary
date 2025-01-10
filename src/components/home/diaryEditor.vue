@@ -33,7 +33,7 @@ onUpdated(() => {
         });
         isEdit.value = true;
         updateLogdate();
-    }
+    } else isEdit.value = false;
 });
 
 const updateLogdate = () => {

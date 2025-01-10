@@ -104,6 +104,7 @@ const calendarOptions = reactive({
     },
     datesSet: onChangeMonth,
     validRange: {
+        start: "2024-11-01",
         end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
     },
     events: [],

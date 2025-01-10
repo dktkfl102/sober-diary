@@ -12,12 +12,19 @@ export default defineConfig(({ mode }) => {
         optimizeDeps: {
             exclude: ["vuetify"],
         },
+        build: {
+            rollupOptions: {
+                output: {
+                    entryFileNames: `[name]` + "_20250110" + `.js`,
+                    chunkFileNames: `[name]` + "_20250110" + `.js`,
+                },
+            },
+        },
         server: {
             proxy: {
                 "/main": {
                     target: env.VITE_API,
                     changeOrigin: true,
-                    // rewrite: (path) => path.replace(/^\/main/, ''),
                     secure: false,
                     ws: true,
                 },

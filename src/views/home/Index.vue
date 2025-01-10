@@ -163,12 +163,12 @@ const calendarOptions = reactive({
                     </div>
                 </div>
                 <div
-                    class="absolute right-[-100%] z-10 flex gap-x-2 transition-all"
+                    class="absolute right-[-100%] flex gap-x-2 transition-all"
                     :class="{ '!right-1': swipeId === item.id }"
                 >
                     <div
                         class="flex flex-col items-center justify-center rounded-lg bg-gray-400 px-4 py-1.5"
-                        @click="updateDiary(item)"
+                        @click.stop="updateDiary(item)"
                     >
                         <v-icon
                             icon="mdi-pencil-outline"
@@ -179,7 +179,7 @@ const calendarOptions = reactive({
                     </div>
                     <div
                         class="flex flex-col items-center justify-center rounded-lg bg-red-500 px-4 py-1.5"
-                        @click="deleteDiary(item.id)"
+                        @click.stop="deleteDiary(item.id)"
                     >
                         <v-icon
                             icon="mdi-delete-outline"

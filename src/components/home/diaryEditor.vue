@@ -12,7 +12,7 @@ const show = defineModel("show", { type: Boolean });
 const props = defineProps({ editData: Object });
 const emits = defineEmits(["commit"]);
 
-const diaryData = reactive({
+let diaryData = reactive({
     score: 1,
     logDate: new Date(),
     memo: "",
@@ -32,8 +32,16 @@ onUpdated(() => {
             logDate: new Date(props.editData.log_date),
         });
         isEdit.value = true;
-        updateLogdate();
-    } else isEdit.value = false;
+    } else {
+        isEdit.value = false;
+        diaryData = {
+            score: 1,
+            logDate: new Date(),
+            memo: "",
+            smoked: false,
+        };
+    }
+    updateLogdate();
 });
 
 const updateLogdate = () => {
@@ -51,6 +59,7 @@ const writeDiary = async () => {
         if (isDuplicated) return;
 
         diaryData.logDate = DateUtils.convertToKST(diaryData.logDate); // 서버에 전송전 KST 변환
+        console.log(diaryData);
         await diarySql.insert(diaryData);
         await checkCurrentChallenge();
     } catch (e) {

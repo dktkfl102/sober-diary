@@ -126,7 +126,7 @@ const calendarOptions = reactive({
                 v-for="item of list"
                 :key="item.id"
                 @touchstart.passive="touchStart"
-                @touchend="touchEnd($event, item.id)"
+                @touchend.stop="touchEnd($event, item.id)"
                 class="relative flex items-center justify-between overflow-hidden bg-gray-800 p-4"
             >
                 <div class="flex items-center space-x-4">

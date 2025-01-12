@@ -34,12 +34,12 @@ onUpdated(() => {
         isEdit.value = true;
     } else {
         isEdit.value = false;
-        diaryData = {
+        Object.assign(diaryData, {
             score: 1,
             logDate: new Date(),
             memo: "",
             smoked: false,
-        };
+        });
     }
     updateLogdate();
 });

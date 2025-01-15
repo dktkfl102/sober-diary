@@ -1,12 +1,13 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { inject, ref, onMounted } from "vue";
 
 import challengeSql from "@/services/sql/challenge.sql";
 import DateUtils from "@/utils/date-utils";
 import BottomNavigation from "@/components/layout/BottomNavigation.vue";
 import Add from "@/components/challenge/Add.vue";
-import StatusEdit from "@/components/challenge/StatusEdit.vue";
+import BottomSheet from "@/utils/bottomSheet/BottomSheet.vue";
 
+const bottomSheetContents = inject("$bottomSheetContents");
 const ingList = ref([]);
 const completedList = ref([]);
 const addPopsShow = ref(false);
@@ -203,6 +204,16 @@ const clickProgressChalllenge = (id, challengeId) => {
     >
         <v-icon icon="mdi-plus"></v-icon>
     </div>
-    <StatusEdit v-model:show="statusEditPopsShow" @commit="editStatus" />
+    <BottomSheet
+        v-model:show="statusEditPopsShow"
+        @commit="editStatus"
+        :popData="bottomSheetContents.CHANGE_CHALLENGE_STATUS"
+    >
+        <template v-slot:bottom>
+            <p class="text-center">
+                <span class="text-xs underline">삭제하기</span>
+            </p>
+        </template>
+    </BottomSheet>
     <BottomNavigation></BottomNavigation>
 </template>

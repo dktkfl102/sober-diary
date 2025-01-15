@@ -4,6 +4,7 @@ import App from "./App.vue";
 import router from "@/router";
 
 import { createPinia } from "pinia";
+import BottomSheetContents from "@/utils/bottomSheet/bottomSheet.contents";
 // Vuetify
 import "vuetify/styles";
 import vuetify from "@/plugins/vuetify";
@@ -17,4 +18,5 @@ app.config.globalProperties.$common = computed(() => {
     return commonStore;
 });
 
+app.provide("$bottomSheetContents", BottomSheetContents);
 app.use(router).use(pinia).use(vuetify).mount("#app");

@@ -1,7 +1,9 @@
 <script setup>
 import { reactive, inject } from "vue";
+import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user.js";
 
+import UserUtils from "@/utils/user-utils";
 import LocalStorageService from "@/services/localStorage/local-storage.service";
 import LocalStorageKey from "@/services/localStorage/local-storage-key";
 
@@ -9,15 +11,18 @@ import BottomNavigation from "@/components/layout/BottomNavigation.vue";
 import Suggestions from "@/components/setting/Suggestions.vue";
 import PrivacyPage from "@/components/common/terms/PrivacyPage.vue";
 import UseTerms from "@/components/common/terms/UseTerms.vue";
-import Reset from "@/components/setting/Reset.vue";
+import BottomSheet from "@/utils/bottomSheet/BottomSheet.vue";
 
 const user = useUserStore();
+const router = useRouter();
+const bottomSheetContents = inject("$bottomSheetContents");
+
 const state = reactive({
     isNotification: true,
     privacyShow: false,
     useTermsShow: false,
     suggestionsShow: false,
-    regetPopupShow: false,
+    resetPopupShow: false,
     customerCenter: [
         { key: "faq", name: "FAQ", icon: "frequently-asked-questions" },
         { key: "suggestions", name: "의견 보내기", icon: "message-draw" },
@@ -34,6 +39,14 @@ const onChangeSmofingStatus = () => {
         LocalStorageKey.SMOKING_STATUS,
         user.info.smokingStatus
     );
+};
+
+const handleResetAppData = (val) => {
+    if (val) {
+        LocalStorageService.clearStorage();
+        router.push({ name: "Index" });
+    }
+    state.resetPopupShow = false;
 };
 </script>
 <template>
@@ -90,7 +103,7 @@ const onChangeSmofingStatus = () => {
         <div class="mt-1 text-center">
             <span
                 class="text-xs text-gray-400 underline"
-                @click="state.regetPopupShow = true"
+                @click="state.resetPopupShow = true"
                 >데이터 초기화</span
             >
         </div>
@@ -98,7 +111,11 @@ const onChangeSmofingStatus = () => {
     <BottomNavigation></BottomNavigation>
 
     <Suggestions v-model:show="state.suggestionsShow" :user="user.info.id" />
-    <Reset v-model:show="state.regetPopupShow" />
+    <BottomSheet
+        v-model:show="state.resetPopupShow"
+        :popData="bottomSheetContents.INITIALIZE_APP_DATA"
+        @commit="handleResetAppData"
+    />
     <PrivacyPage :show="state.privacyShow" @close="state.privacyShow = false" />
     <UseTerms :show="state.useTermsShow" @close="state.useTermsShow = false" />
 </template>

@@ -1,5 +1,28 @@
-# Vue 3 + Vite
+# QuitMate
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+A tracking app for quitting alcohol, smoking. Designed to support modern users with habit tracking and motivational challenges.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## Key Features
+
+-   Automatic user management with UUID generation
+-   Emphasis on simplicity and ease of use for tracking drinking and smoking habits.
+-   Statistics and analysis
+
+## Install & Run
+
+-   You need .env file on root ( That needs supabase API and key )
+-   npm run build
+-   npm run start
+
+## Key Highlights
+
+-   Efforts to reduce bundled JavaScript file size (utilized Bundlephobia).
+-   Utilized Pinia to prevent unnecessary re-fetching of constant data.
+-   Simple usage without the need for account registration.
+
+## Future Plans & Improvements
+
+-   Expanding tracking options to include other habits (e.g., reducing carbs, avoiding soda).
+-   Enhancing data visualization for more in-depth analysis.
+-   Introducing social features, such as community challenges or sharing progress with friends.
+-   Continuous UI/UX optimization based on user feedback.

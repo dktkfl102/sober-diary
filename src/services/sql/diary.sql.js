@@ -1,11 +1,11 @@
 import db from "@/lib/db";
 import { useUserStore } from "@/stores/user.js";
 
-const user = useUserStore();
-const user_id = user.info.id;
-
 class DiarySQLService {
     async insert(params) {
+        const user = useUserStore();
+        const user_id = user.info.id;
+
         params = {
             ...params,
             log_date: params.logDate,
@@ -22,6 +22,9 @@ class DiarySQLService {
     }
 
     async getRecentList() {
+        const user = useUserStore();
+        const user_id = user.info.id;
+
         const { data, error } = await db
             .from("diary")
             .select()
@@ -37,6 +40,9 @@ class DiarySQLService {
 
     // date : yyyy-mm
     async getListByMonth(date) {
+        const user = useUserStore();
+        const user_id = user.info.id;
+
         const [year, month] = date.split("-").map(Number);
 
         const startOfMonth = `${year}-${String(month).padStart(2, "0")}-01`;
@@ -61,6 +67,9 @@ class DiarySQLService {
     }
 
     async getSpecificDate(date) {
+        const user = useUserStore();
+        const user_id = user.info.id;
+
         const { data, error } = await db
             .from("diary")
             .select()
@@ -75,7 +84,14 @@ class DiarySQLService {
     }
 
     async delete(id) {
-        const { data, error } = await db.from("diary").delete().eq("id", id);
+        const user = useUserStore();
+        const user_id = user.info.id;
+
+        const { data, error } = await db
+            .from("diary")
+            .delete()
+            .eq("id", id)
+            .eq("user_id", user_id);
 
         if (error) {
             throw new Error("Error deleting specific date diary:", error);
@@ -85,6 +101,9 @@ class DiarySQLService {
     }
 
     async update(params, id) {
+        const user = useUserStore();
+        const user_id = user.info.id;
+
         params = {
             ...params,
             log_date: params.logDate,
@@ -94,7 +113,8 @@ class DiarySQLService {
         const { data, error } = await db
             .from("diary")
             .update(params)
-            .eq("id", id);
+            .eq("id", id)
+            .eq("user_id", user_id);
 
         if (error) {
             throw new Error("Error updating specific date diary:", error);
@@ -104,6 +124,9 @@ class DiarySQLService {
     }
 
     async checkChallenge(start_date, endDate, category_id) {
+        const user = useUserStore();
+        const user_id = user.info.id;
+
         const { count, error } = await db
             .from("diary")
             .select("*", { count: "exact", head: true })

@@ -1,11 +1,11 @@
 import db from "@/lib/db";
 import { useUserStore } from "@/stores/user.js";
 
-const user = useUserStore();
-const user_id = user.info.id;
-
 class ChallengeSQLService {
     async insert(params) {
+        const user = useUserStore();
+        const user_id = user.info.id;
+
         params = {
             ...params,
             category_id: params.categoryId,
@@ -27,6 +27,9 @@ class ChallengeSQLService {
     }
 
     async getRecentList() {
+        const user = useUserStore();
+        const user_id = user.info.id;
+
         const { data, error } = await db
             .from("user_challenges")
             .select()
@@ -40,6 +43,9 @@ class ChallengeSQLService {
     }
 
     async getInProgressList() {
+        const user = useUserStore();
+        const user_id = user.info.id;
+
         const { data, error } = await db
             .from("user_challenges")
             .select("*")
@@ -54,10 +60,31 @@ class ChallengeSQLService {
         return data;
     }
 
+    async delete(id) {
+        const user = useUserStore();
+        const user_id = user.info.id;
+
+        const { data, error } = await db
+            .from("user_challenges")
+            .delete()
+            .eq("user_id", user_id)
+            .eq("id", id);
+
+        if (error) {
+            throw new Error("Error deleting user challenge:", error);
+        }
+
+        return data;
+    }
+
     async updateStatus(id, result) {
+        const user = useUserStore();
+        const user_id = user.info.id;
+
         const { data, error } = await db
             .from("user_challenges")
             .update({ status: result })
+            .eq("user_id", user_id)
             .eq("id", id);
 
         if (error) {
@@ -68,6 +95,9 @@ class ChallengeSQLService {
     }
 
     async getRangeChallengeByCategory(category_id) {
+        const user = useUserStore();
+        const user_id = user.info.id;
+
         const { data, error } = await db
             .from("user_challenges")
             .select()

@@ -15,6 +15,7 @@ const routes = [
         path: "/challenge",
         name: "Challenge",
         component: () => import("@/views/challenge/Index.vue"),
+        meta: { preload: true },
     },
     {
         path: "/statistics",
@@ -25,6 +26,7 @@ const routes = [
         path: "/setting",
         name: "Setting",
         component: () => import("@/views/setting/Index.vue"),
+        meta: { preload: true },
     },
 ];
 

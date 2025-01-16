@@ -40,6 +40,9 @@ onMounted(initializeUser);
 </script>
 
 <template>
+    <div class="flex h-screen w-full items-center justify-center">
+        <img src="@/assets/images/icon/splash.png" class="block w-28" />
+    </div>
     <BottomSheet
         :show="isSmokingStatusPopupVisible"
         :popData="bottomSheetContents.CHECK_SMOKING_STATUS"

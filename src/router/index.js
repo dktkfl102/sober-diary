@@ -40,9 +40,10 @@ const router = createRouter({
 
 const env = import.meta.env.MODE;
 router.beforeEach((to, from, next) => {
-    // if (!navigator.userAgent.includes("ReactNative")) {
-    //     return (window.location.href = "https://www.naver.com");
-    // }
+    if (env === "production") {
+        if (!window.ReactNativeWebView)
+            return (window.location.href = "https://blog.naver.com/hug1me");
+    }
     next();
 });
 

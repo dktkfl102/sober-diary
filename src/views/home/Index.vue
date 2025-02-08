@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, computed } from "vue";
 import { useToastStore } from "@/stores/toast";
 import { useUserStore } from "@/stores/user.js";
 
@@ -148,7 +148,7 @@ const calendarOptions = reactive({
                 </div>
                 <div class="flex min-w-max flex-col items-center">
                     <span class="text-sm text-gray-400">{{
-                        DateUtils.getMonthAndDay(item.log_date)
+                        DateUtils.checkTodayAndYesterDay(item.log_date)
                     }}</span>
                     <div v-if="user.info.smokingStatus">
                         <span v-if="item.smoked"

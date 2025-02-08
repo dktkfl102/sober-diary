@@ -1,4 +1,15 @@
 export default class DateUtils {
+    static todayMonthAndDay;
+    static yesterdayMonthAndDay;
+
+    static {
+        this.todayMonthAndDay = this.getMonthAndDay(new Date());
+
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        this.yesterdayMonthAndDay = this.getMonthAndDay(yesterday);
+    }
+
     static toStringByFormatting(source, delimiter = "-") {
         const year = source.getFullYear();
         const month = this.leftPad(source.getMonth() + 1);
@@ -46,6 +57,13 @@ export default class DateUtils {
         const month = this.leftPad(date.getMonth() + 1);
 
         return year + "-" + month;
+    }
+
+    static checkTodayAndYesterDay(date) {
+        const displayTxt = this.getMonthAndDay(date);
+        if (displayTxt === this.todayMonthAndDay) return "오늘";
+        if (displayTxt === this.yesterdayMonthAndDay) return "어제";
+        else return displayTxt;
     }
 
     static getMonthAndDaySlash(inputDate) {

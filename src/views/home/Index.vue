@@ -1,7 +1,6 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from "vue";
 import { useToastStore } from "@/stores/toast";
-import { useUserStore } from "@/stores/user.js";
 
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -9,18 +8,16 @@ import interactionPlugin from "@fullcalendar/interaction";
 
 import diarySql from "@/services/sql/diary.sql";
 import DateUtils from "@/utils/date-utils";
-import { alcholeMessages, scoreColors } from "@/constants/alchole";
+import List from "@/components/home/List.vue";
 import BottomNavigation from "@/components/layout/BottomNavigation.vue";
 import diaryEditor from "@/components/home/diaryEditor.vue";
+import { scoreColors } from "@/constants/alchole";
 
-const user = useUserStore();
 const toast = useToastStore();
 
 const diaryEditorShow = ref(false);
 const list = ref([]);
 const addPopupKey = ref(0);
-const swipeId = ref(null);
-const prevPosX = ref(null);
 const editData = ref({});
 const formattedMonth = ref(null);
 const soberDay = ref(0);
@@ -55,7 +52,6 @@ const deleteDiary = async (id) => {
 const updateDiary = async (item) => {
     editData.value = item;
     diaryEditorShow.value = true;
-    swipeId.value = null;
 };
 
 // date에 해당하는 월의 데이터만 달력에 표시해줌
@@ -82,18 +78,6 @@ const onClickDate = (e) => {
 
 const onChangeMonth = (e) => {
     updateMonthlyEvents(e.view.getCurrentData().currentDate);
-};
-
-const touchStart = (e) => {
-    prevPosX.value = e.changedTouches[0].clientX;
-};
-
-const touchEnd = (e, id) => {
-    if (swipeId.value === id) return;
-    const posX = e.changedTouches[0].clientX;
-    if (prevPosX.value > posX) {
-        swipeId.value = id;
-    } else swipeId.value = null;
 };
 
 const calendarOptions = reactive({
@@ -129,74 +113,12 @@ const calendarOptions = reactive({
                 >{{ formattedMonth.replace("-", "년 ") }}월 금주 일</span
             ><span>{{ soberDay }}일</span>
         </div>
-        <ul class="divide-y divide-gray-400 rounded-lg" v-if="list.length > 0">
-            <li
-                v-for="item of list"
-                :key="item.id"
-                @touchstart.passive="touchStart"
-                @touchend="touchEnd($event, item.id)"
-                class="relative flex items-center justify-between overflow-hidden bg-gray-800 p-4"
-            >
-                <div class="flex items-center space-x-4">
-                    <span
-                        class="h-8 w-8 flex-shrink-0 rounded-full"
-                        :class="'bg-[' + scoreColors[item.score] + ']'"
-                    ></span>
-                    <div class="flex flex-col">
-                        <span class="text-lg font-medium">{{
-                            alcholeMessages[item.score]
-                        }}</span>
-                        <span class="text-sm text-gray-300">{{
-                            item.memo
-                        }}</span>
-                    </div>
-                </div>
-                <div class="flex min-w-max flex-col items-center">
-                    <span class="text-sm text-gray-400">{{
-                        DateUtils.checkTodayAndYesterDay(item.log_date)
-                    }}</span>
-                    <div v-if="user.info.smokingStatus">
-                        <span v-if="item.smoked"
-                            ><v-icon
-                                icon="mdi-smoking"
-                                class="!text-base text-gray-200"
-                        /></span>
-                        <span v-else
-                            ><v-icon
-                                icon="mdi-smoking-off"
-                                class="!text-base text-gray-200"
-                        /></span>
-                    </div>
-                </div>
-                <div
-                    class="absolute right-[-100%] flex gap-x-2 transition-all"
-                    :class="{ '!right-1': swipeId === item.id }"
-                >
-                    <div
-                        class="flex flex-col items-center justify-center rounded-lg bg-gray-400 px-4 py-1.5"
-                        @click="updateDiary(item)"
-                    >
-                        <v-icon
-                            icon="mdi-pencil-outline"
-                            size="small"
-                            class="mb-1"
-                        />
-                        <span class="text-xs font-light">수정</span>
-                    </div>
-                    <div
-                        class="flex flex-col items-center justify-center rounded-lg bg-red-500 px-4 py-1.5"
-                        @click="deleteDiary(item.id)"
-                    >
-                        <v-icon
-                            icon="mdi-delete-outline"
-                            size="small"
-                            class="mb-1"
-                        />
-                        <span class="text-xs font-light">삭제</span>
-                    </div>
-                </div>
-            </li>
-        </ul>
+        <List
+            :list="list"
+            @delete="deleteDiary($event)"
+            @update="updateDiary($event)"
+            v-if="list.length > 0"
+        />
         <div class="flex flex-col items-center" v-else>
             <v-icon
                 icon="mdi-gift-open-outline"

@@ -22,6 +22,8 @@ const addPopupKey = ref(0);
 const swipeId = ref(null);
 const prevPosX = ref(null);
 const editData = ref({});
+const formattedMonth = ref(null);
+const soberDay = ref(0);
 
 onMounted(async () => {
     try {
@@ -34,7 +36,7 @@ onMounted(async () => {
 const getRecentDiary = async () => {
     try {
         list.value = await diarySql.getRecentList();
-        addEventsOnCalendar();
+        updateMonthlyEvents();
     } catch (e) {
         toast.showToast(e);
     }
@@ -57,17 +59,19 @@ const updateDiary = async (item) => {
 };
 
 // date에 해당하는 월의 데이터만 달력에 표시해줌
-const addEventsOnCalendar = (date = null) => {
-    const formattedToday = DateUtils.getYearAndMonth(date);
+const updateMonthlyEvents = (date = null) => {
+    formattedMonth.value = DateUtils.getYearAndMonth(date);
     calendarOptions.events = [];
+    soberDay.value = 0;
     for (let i = 0; i < list.value.length; i++) {
         const item = list.value[i];
-        if (item.log_date.startsWith(formattedToday)) {
+        if (item.log_date.startsWith(formattedMonth.value)) {
             calendarOptions.events.push({
                 start: item.log_date,
                 display: "background",
                 backgroundColor: scoreColors[item.score],
             });
+            if (item.score === 1) soberDay.value++;
         } else continue;
     }
 };
@@ -77,7 +81,7 @@ const onClickDate = (e) => {
 };
 
 const onChangeMonth = (e) => {
-    addEventsOnCalendar(e.view.getCurrentData().currentDate);
+    updateMonthlyEvents(e.view.getCurrentData().currentDate);
 };
 
 const touchStart = (e) => {
@@ -120,10 +124,11 @@ const calendarOptions = reactive({
         <FullCalendar :options="calendarOptions" />
     </div>
     <div class="mx-4 pb-32">
-        <!-- <div class="mb-1 flex flex-col items-end">
-            <span class="text-xs text-gray-400">2024년 12월 금주 일</span
-            ><span>3일</span>
-        </div> -->
+        <div class="mb-1 flex flex-col items-end" v-if="formattedMonth">
+            <span class="text-xs text-gray-400"
+                >{{ formattedMonth.replace("-", "년 ") }}월 금주 일</span
+            ><span>{{ soberDay }}일</span>
+        </div>
         <ul class="divide-y divide-gray-400 rounded-lg" v-if="list.length > 0">
             <li
                 v-for="item of list"

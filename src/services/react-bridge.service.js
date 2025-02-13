@@ -1,4 +1,4 @@
-// import { store } from '@/store';
+import { useCommonStore } from "@/stores/common.js";
 import router from "@/router";
 
 // import mitts from '@/utils/mitt';
@@ -157,14 +157,16 @@ class ReactBridgeService {
             //     break;
             case "notification":
                 break;
-            case "osVersion":
+            case "version":
+                const common = useCommonStore();
+                common.version = data;
                 // store.dispatch('setUserData', { media: data.os.toUpperCase() });
                 // store.dispatch('setCommonData', { version: data.version });
-                LocalStorage.setItem(LocalStorageKey.APP_VERSION, data.version);
-                LocalStorage.setItem(
-                    LocalStorageKey.DEVICE_OS,
-                    data.os.toUpperCase()
-                );
+                // LocalStorage.setItem(LocalStorageKey.APP_VERSION, data);
+                // LocalStorage.setItem(
+                //     LocalStorageKey.DEVICE_OS,
+                //     data.os.toUpperCase()
+                // );
                 break;
             default: {
                 // TODO: 앱 다음버전 배포시 kakao auto sign msg object 명 변경

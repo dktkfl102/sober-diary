@@ -2,6 +2,7 @@
 import { reactive, inject } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user.js";
+import { useCommonStore } from "@/stores/common";
 
 import UserUtils from "@/utils/user-utils";
 import LocalStorageService from "@/services/localStorage/local-storage.service";
@@ -14,6 +15,7 @@ import UseTerms from "@/components/common/terms/UseTerms.vue";
 import BottomSheet from "@/utils/bottomSheet/BottomSheet.vue";
 
 const user = useUserStore();
+const common = useCommonStore();
 const router = useRouter();
 const bottomSheetContents = inject("$bottomSheetContents");
 
@@ -83,7 +85,9 @@ const handleResetAppData = (val) => {
             </li>
             <li class="flex items-center justify-between bg-gray-800 p-4">
                 <span class="text-lg font-medium">앱 버전</span>
-                <span class="text-sm text-gray-400">1.0.0</span>
+                <span class="text-sm text-gray-400">{{
+                    common.version ? common.version : "1.1"
+                }}</span>
             </li>
             <li
                 class="flex items-center justify-between bg-gray-800 p-4"
